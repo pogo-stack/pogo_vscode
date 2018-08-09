@@ -1,0 +1,26 @@
+{
+    "name": "pogo",
+    "displayName": "POGO",
+    "description": "POGO Stack",
+    "version": "0.0.1",
+    "publisher": "evgenyk",
+    "engines": {
+        "vscode": "^1.11.0"
+    },
+    "categories": [
+        "Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "pogo",
+            "aliases": ["pogo", "pogo"],
+            "extensions": ["pogo"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "pogo",
+            "scopeName": "source.pogo",
+            "path": "./syntaxes/pogo.tmLanguage"
+        }]
+    }
+}
