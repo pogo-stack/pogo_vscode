@@ -25,7 +25,8 @@
 		},
 		{
 			"include": "#entities"
-		}	],
+		}
+	],
 	"repository": {
 		"plsql": {
 			"patterns": [
@@ -37,14 +38,51 @@
 				{
 					"begin": "<%",
 					"end": "%>",
-					"name": "meta.pogo.plsql"
+					"name": "meta.pogo.plsql",
+					"patterns": [
+						{
+							"include": "#keywords"
+						},
+						{
+							"include": "#strings"
+						},
+						{
+							"include": "#comment"
+						}
+					]
 				}
-			]
+			],
+			"repository": {
+				"keywords": {
+					"patterns": [
+						{
+							"name": "keyword.control.pogo",
+							"match": "\\b(if|while|for|return)\\b"
+						}
+					]
+				},
+				"strings": {
+					"name": "string.quoted.double.pogo",
+					"begin": "\"",
+					"end": "\"",
+					"patterns": [
+						{
+							"name": "constant.character.escape.pogo",
+							"match": "\\\\."
+						}
+					]
+				},
+				"comment": {
+					"patterns": [
+						{
+							"begin": "\/\\*",
+							"end": "\\*\/",
+							"name": "comment.block.postgres"
+						}
+					]
+				}
+			}
 		},
-
-
-
-
 		"attribute": {
 			"patterns": [
 				{
@@ -2592,9 +2630,6 @@
 				}
 			]
 		}
-	
-
-
 	},
 	"scopeName": "source.pogo",
 	"uuid": "48DCE4DD-A5E1-4ED3-8847-64GA6B7F9163"
