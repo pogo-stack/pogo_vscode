@@ -5,22 +5,22 @@
     "version": "0.0.1",
     "publisher": "evgenyk",
     "engines": {
-        "vscode": "^1.11.0"
+        "vscode": "^1.28.2"
     },
     "categories": [
-        "Languages"
+        "Programming Languages"
     ],
     "contributes": {
         "languages": [{
             "id": "pogo",
-            "aliases": ["pogo", "pogo"],
+            "aliases": ["pogo"],
             "extensions": ["pogo"],
             "configuration": "./language-configuration.json"
         }],
         "grammars": [{
             "language": "pogo",
             "scopeName": "source.pogo",
-            "path": "./syntaxes/pogo.tmLanguage"
+            "path": "./syntaxes/pogo.tmLanguage.json"                    
         }]
     }
 }

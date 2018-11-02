@@ -1,10 +1,25 @@
+
 {
-	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-	"name": "pogo",
+	"information_for_contributors": [
+		"This file has been converted from https://github.com/textmate/html.tmbundle/blob/master/Syntaxes/HTML.plist",
+		"If you want to provide a fix or improvement, please create a pull request against the original repository.",
+		"Once accepted there, we are happy to receive an update request."
+	],
+	"version": "https://github.com/textmate/html.tmbundle/commit/390c8870273a2ae80244dae6db6ba064a802f407",
+	"name": "HTML",
+	"scopeName": "text.html.basic",
+	"injections": {
+		"R:text.html - (comment.block, text.html meta.embedded, meta.tag.*.*.html, meta.tag.*.*.*.html, meta.tag.*.*.*.*.html)": {
+			"comment": "Uses R: to ensure this matches after any other injections.",
+			"patterns": [
+				{
+					"match": "<",
+					"name": "invalid.illegal.bad-angle-bracket.html"
+				}
+			]
+		}
+	},
 	"patterns": [
-		{
-			"include": "#plsql"
-		},
 		{
 			"include": "#xml-processing"
 		},
@@ -25,26 +40,9 @@
 		},
 		{
 			"include": "#entities"
-		}	],
+		}
+	],
 	"repository": {
-		"plsql": {
-			"patterns": [
-				{
-					"begin": "<\\?",
-					"end": "\\?>",
-					"name": "meta.pogo.plsql.variables"
-				},
-				{
-					"begin": "<%",
-					"end": "%>",
-					"name": "meta.pogo.plsql"
-				}
-			]
-		},
-
-
-
-
 		"attribute": {
 			"patterns": [
 				{
@@ -2592,10 +2590,5 @@
 				}
 			]
 		}
-	
-
-
-	},
-	"scopeName": "source.pogo",
-	"uuid": "48DCE4DD-A5E1-4ED3-8847-64GA6B7F9163"
+	}
 }
