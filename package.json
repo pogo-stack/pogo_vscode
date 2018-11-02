@@ -2,7 +2,7 @@
     "name": "pogo",
     "displayName": "POGO",
     "description": "POGO Stack",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "evgenyk",
     "engines": {
         "vscode": "^1.28.2"
