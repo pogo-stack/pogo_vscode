@@ -4,6 +4,9 @@
     "description": "POGO Stack",
     "version": "0.1.0",
     "publisher": "evgenyk",
+    "repository": {
+        "url": "https://github.com/evgenyk/pogo_vscode"
+    },
     "engines": {
         "vscode": "^1.28.2"
     },
