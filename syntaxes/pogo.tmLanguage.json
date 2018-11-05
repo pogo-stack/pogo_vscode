@@ -3,6 +3,9 @@
 	"name": "pogo",
 	"patterns": [
 		{
+			"include": "#pogo_line_comment"
+		},
+		{
 			"include": "#plsql"
 		},
 		{
@@ -28,6 +31,14 @@
 		}
 	],
 	"repository": {
+		"pogo_line_comment": {
+			"patterns": [
+				{
+					"match":"//.*$",
+					"name":"comment.block.pogo"
+				}
+			]
+		},
 		"plsql": {
 			"patterns": [
 				{
@@ -36,7 +47,16 @@
 					"name": "meta.pogo.plsql.variables",
 					"patterns": [
 						{
+							"include": "#pogo_line_comment"
+						},
+						{
 							"include": "#strings"
+						},
+						{
+							"include": "#strings"
+						},
+						{
+							"include": "#postgres_syntax"
 						}
 					]
 				},
@@ -46,11 +66,42 @@
 					"name": "meta.pogo.plsql",
 					"patterns": [
 						{
+							"include": "#pogo_line_comment"
+						},
+						{
 							"include": "#keywords"
 						},
 						{
 							"include": "#strings"
 						},
+						{
+							"include": "#postgres_syntax"
+						}
+					]
+				}
+			],
+			"repository": {
+				"keywords": {
+					"patterns": [
+						{
+							"name": "keyword.control.pogo",
+							"match": "\\b(if|while|for|return)\\b"
+						}
+					]
+				},
+				"strings": {
+					"name": "string.quoted.double.pogo",
+					"begin": "\"",
+					"end": "\"",
+					"patterns": [
+						{
+							"name": "constant.character.escape.pogo",
+							"match": "\\\\."
+						}
+					]
+				},
+				"postgres_syntax": {
+					"patterns": [
 						{
 							"begin":"\/\\*",
 							"end":"\\*\/",
@@ -184,27 +235,7 @@
 						 {
 							"match":"(?i)\\b(number|integer|bigint|varchar2|varchar|boolean|date|setof|record|query|numeric|void|character varying|text|([-a-z0-9_.]+%(row)?type))\\b",
 							"name":"storage.type.postgres"
-						 }					]
-				}
-			],
-			"repository": {
-				"keywords": {
-					"patterns": [
-						{
-							"name": "keyword.control.pogo",
-							"match": "\\b(if|while|for|return)\\b"
-						}
-					]
-				},
-				"strings": {
-					"name": "string.quoted.double.pogo",
-					"begin": "\"",
-					"end": "\"",
-					"patterns": [
-						{
-							"name": "constant.character.escape.pogo",
-							"match": "\\\\."
-						}
+						 }					
 					]
 				}
 			}
