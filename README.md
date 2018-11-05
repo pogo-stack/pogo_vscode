@@ -13,3 +13,9 @@ Initial release with `plsql` support only.
 ### 0.1.0
 
 Added support for HTML, JS, CSS, pogo definition sections
+
+### 0.1.1
+
+Added support for `//` pogo-style line comments
+
+Added syntax highlighting in variable definition sections

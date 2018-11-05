@@ -1,8 +1,8 @@
 {
     "name": "pogo",
     "displayName": "POGO",
-    "description": "POGO Stack",
-    "version": "0.1.0",
+    "description": "POGO Stack language support",
+    "version": "0.1.1",
     "publisher": "evgenyk",
     "repository": {
         "url": "https://github.com/evgenyk/pogo_vscode"
@@ -23,7 +23,7 @@
         "grammars": [{
             "language": "pogo",
             "scopeName": "source.pogo",
-            "path": "./syntaxes/pogo.tmLanguage.json"                    
+            "path": "./syntaxes/pogo.tmLanguage.json"
         }]
     }
 }
