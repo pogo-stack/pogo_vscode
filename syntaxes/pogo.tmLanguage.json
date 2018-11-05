@@ -42,6 +42,42 @@
 		"plsql": {
 			"patterns": [
 				{
+					"begin": "<%=",
+					"end": "%>",
+					"name": "meta.pogo.component",
+					"patterns": [
+						{
+					
+							"match":"(?i)(psp_\\w+)",
+							"name":"support.function.postgres"
+						},
+						{
+							"match":"(?i)(f_\\w+)",
+							"name":"support.function.postgres"
+						},
+						{
+							"match":"(?i)(psp2_\\w+)",
+							"name":"support.function.postgres"
+						},
+						{
+							"match":"(?i)(p_\\w+)",
+							"name":"support.type"
+						},
+						{
+							"include": "#pogo_line_comment"
+						},
+						{
+							"include": "#strings"
+						},
+						{
+							"include": "#strings"
+						},
+						{
+							"include": "#postgres_syntax"
+						}
+					]
+				},
+				{
 					"begin": "<\\?",
 					"end": "\\?>",
 					"name": "meta.pogo.plsql.variables",
@@ -187,7 +223,7 @@
 							"name":"support.function.postgres"
 						 },
 						 {
-							"match":"(?i)\\b(json_agg|avg|count|sum|max|min|nvl|trim|to_date|to_char|lpad|ltrim|rpad|rtrim|trunc|to_number|regexp_split_to_array|regexp_replace)\\b",
+							"match":"(?i)\\b(unnest|string_agg|json_agg|avg|count|sum|max|min|nvl|trim|to_date|to_char|lpad|ltrim|rpad|rtrim|trunc|to_number|regexp_split_to_array|regexp_replace)\\b",
 							"name":"keyword.function.builtin.postgres"
 						 },
 						 {
@@ -516,6 +552,9 @@
 					]
 				},
 				{
+					"include": "#plsql"
+				},
+				{
 					"match": "[^\\s>]+",
 					"name": "invalid.illegal.character-not-allowed-here.html"
 				}
@@ -818,6 +857,9 @@
 									"include": "#attribute-interior"
 								}
 							]
+						},
+						{
+							"include": "#plsql"
 						},
 						{
 							"match": "[^\\s>]+",
@@ -1297,6 +1339,9 @@
 									"include": "#attribute-interior"
 								}
 							]
+						},
+						{
+							"include": "#plsql"
 						},
 						{
 							"match": "[^\\s>]+",

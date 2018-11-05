@@ -2,7 +2,7 @@
     "name": "pogo",
     "displayName": "POGO",
     "description": "POGO Stack language support",
-    "version": "0.1.1",
+    "version": "1.1.0",
     "publisher": "evgenyk",
     "repository": {
         "url": "https://github.com/evgenyk/pogo_vscode"
