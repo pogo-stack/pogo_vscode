@@ -1,7 +1,14 @@
 {
     "name": "pogo",
     "displayName": "POGO",
-    "description": "POGO Stack",
+    "repository": {
+        "url": "https://github.com/evgenyk/pogo_vscode"
+    },
+    "author": {
+        "email": "evgeny@komarevtsev.net",
+        "name": "Evgeny Komarevtsev"
+    },
+    "description": "POGO Stack language support for VS Code",
     "version": "0.0.2",
     "publisher": "evgenyk",
     "engines": {
@@ -11,16 +18,24 @@
         "Programming Languages"
     ],
     "contributes": {
-        "languages": [{
-            "id": "pogo",
-            "aliases": ["pogo"],
-            "extensions": ["pogo"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "pogo",
-            "scopeName": "source.pogo",
-            "path": "./syntaxes/pogo.tmLanguage.json"                    
-        }]
+        "languages": [
+            {
+                "id": "pogo",
+                "aliases": [
+                    "pogo"
+                ],
+                "extensions": [
+                    "pogo"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "pogo",
+                "scopeName": "source.pogo",
+                "path": "./syntaxes/pogo.tmLanguage.json"
+            }
+        ]
     }
 }
