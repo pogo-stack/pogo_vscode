@@ -3,6 +3,9 @@
 	"name": "pogo",
 	"patterns": [
 		{
+			"include": "#pogo_line_comment"
+		},
+		{
 			"include": "#plsql"
 		},
 		{
@@ -28,15 +31,68 @@
 		}
 	],
 	"repository": {
+		"pogo_line_comment": {
+			"patterns": [
+				{
+					"match":"//.*$",
+					"name":"comment.block.pogo"
+				}
+			]
+		},
 		"plsql": {
 			"patterns": [
+				{
+					"begin": "<%=",
+					"end": "%>",
+					"name": "meta.pogo.component",
+					"patterns": [
+						{
+					
+							"match":"(?i)(psp_\\w+)",
+							"name":"support.function.postgres"
+						},
+						{
+							"match":"(?i)(f_\\w+)",
+							"name":"support.function.postgres"
+						},
+						{
+							"match":"(?i)(psp2_\\w+)",
+							"name":"support.function.postgres"
+						},
+						{
+							"match":"(?i)(p_\\w+)",
+							"name":"support.type"
+						},
+						{
+							"include": "#pogo_line_comment"
+						},
+						{
+							"include": "#strings"
+						},
+						{
+							"include": "#strings"
+						},
+						{
+							"include": "#postgres_syntax"
+						}
+					]
+				},
 				{
 					"begin": "<\\?",
 					"end": "\\?>",
 					"name": "meta.pogo.plsql.variables",
 					"patterns": [
 						{
+							"include": "#pogo_line_comment"
+						},
+						{
 							"include": "#strings"
+						},
+						{
+							"include": "#strings"
+						},
+						{
+							"include": "#postgres_syntax"
 						}
 					]
 				},
@@ -46,11 +102,42 @@
 					"name": "meta.pogo.plsql",
 					"patterns": [
 						{
+							"include": "#pogo_line_comment"
+						},
+						{
 							"include": "#keywords"
 						},
 						{
 							"include": "#strings"
 						},
+						{
+							"include": "#postgres_syntax"
+						}
+					]
+				}
+			],
+			"repository": {
+				"keywords": {
+					"patterns": [
+						{
+							"name": "keyword.control.pogo",
+							"match": "\\b(if|while|for|return)\\b"
+						}
+					]
+				},
+				"strings": {
+					"name": "string.quoted.double.pogo",
+					"begin": "\"",
+					"end": "\"",
+					"patterns": [
+						{
+							"name": "constant.character.escape.pogo",
+							"match": "\\\\."
+						}
+					]
+				},
+				"postgres_syntax": {
+					"patterns": [
 						{
 							"begin":"\/\\*",
 							"end":"\\*\/",
@@ -136,7 +223,7 @@
 							"name":"support.function.postgres"
 						 },
 						 {
-							"match":"(?i)\\b(json_agg|avg|count|sum|max|min|nvl|trim|to_date|to_char|lpad|ltrim|rpad|rtrim|trunc|to_number|regexp_split_to_array|regexp_replace)\\b",
+							"match":"(?i)\\b(unnest|string_agg|json_agg|avg|count|sum|max|min|nvl|trim|to_date|to_char|lpad|ltrim|rpad|rtrim|trunc|to_number|regexp_split_to_array|regexp_replace)\\b",
 							"name":"keyword.function.builtin.postgres"
 						 },
 						 {
@@ -184,27 +271,7 @@
 						 {
 							"match":"(?i)\\b(number|integer|bigint|varchar2|varchar|boolean|date|setof|record|query|numeric|void|character varying|text|([-a-z0-9_.]+%(row)?type))\\b",
 							"name":"storage.type.postgres"
-						 }					]
-				}
-			],
-			"repository": {
-				"keywords": {
-					"patterns": [
-						{
-							"name": "keyword.control.pogo",
-							"match": "\\b(if|while|for|return)\\b"
-						}
-					]
-				},
-				"strings": {
-					"name": "string.quoted.double.pogo",
-					"begin": "\"",
-					"end": "\"",
-					"patterns": [
-						{
-							"name": "constant.character.escape.pogo",
-							"match": "\\\\."
-						}
+						 }					
 					]
 				}
 			}
@@ -483,6 +550,9 @@
 							"include": "#attribute-interior"
 						}
 					]
+				},
+				{
+					"include": "#plsql"
 				},
 				{
 					"match": "[^\\s>]+",
@@ -787,6 +857,9 @@
 									"include": "#attribute-interior"
 								}
 							]
+						},
+						{
+							"include": "#plsql"
 						},
 						{
 							"match": "[^\\s>]+",
@@ -1266,6 +1339,9 @@
 									"include": "#attribute-interior"
 								}
 							]
+						},
+						{
+							"include": "#plsql"
 						},
 						{
 							"match": "[^\\s>]+",

@@ -4,8 +4,4 @@ Provides `.pogo` syntax hihlighting.
 
 ## Known Issues
 
-No HTML highlighting supoprt at the moment
-
-### 1.0.0
-
-Initial release.
+Unclosed double quotes inside single quotes is not handled properly

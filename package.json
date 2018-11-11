@@ -8,8 +8,8 @@
         "email": "evgeny@komarevtsev.net",
         "name": "Evgeny Komarevtsev"
     },
-    "description": "POGO Stack language support for VS Code",
-    "version": "0.0.2",
+    "description": "POGO Stack language support",
+    "version": "1.1.0",
     "publisher": "evgenyk",
     "engines": {
         "vscode": "^1.28.2"
@@ -18,24 +18,16 @@
         "Programming Languages"
     ],
     "contributes": {
-        "languages": [
-            {
-                "id": "pogo",
-                "aliases": [
-                    "pogo"
-                ],
-                "extensions": [
-                    "pogo"
-                ],
-                "configuration": "./language-configuration.json"
-            }
-        ],
-        "grammars": [
-            {
-                "language": "pogo",
-                "scopeName": "source.pogo",
-                "path": "./syntaxes/pogo.tmLanguage.json"
-            }
-        ]
+        "languages": [{
+            "id": "pogo",
+            "aliases": ["pogo"],
+            "extensions": ["pogo"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "pogo",
+            "scopeName": "source.pogo",
+            "path": "./syntaxes/pogo.tmLanguage.json"
+        }]
     }
 }
