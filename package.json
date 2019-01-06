@@ -1,33 +1,131 @@
 {
-    "name": "pogo",
-    "displayName": "POGO",
-    "repository": {
-        "url": "https://github.com/evgenyk/pogo_vscode"
-    },
-    "author": {
-        "email": "evgeny@komarevtsev.net",
-        "name": "Evgeny Komarevtsev"
-    },
-    "description": "POGO Stack language support",
-    "version": "1.1.0",
-    "publisher": "evgenyk",
-    "engines": {
-        "vscode": "^1.28.2"
-    },
-    "categories": [
-        "Programming Languages"
-    ],
-    "contributes": {
-        "languages": [{
-            "id": "pogo",
-            "aliases": ["pogo"],
-            "extensions": ["pogo"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "pogo",
-            "scopeName": "source.pogo",
-            "path": "./syntaxes/pogo.tmLanguage.json"
-        }]
-    }
+	"name": "pogo",
+	"displayName": "POGO",
+	"repository": {
+		"url": "https://github.com/evgenyk/pogo_vscode"
+	},
+	"author": {
+		"email": "evgeny@komarevtsev.net",
+		"name": "Evgeny Komarevtsev"
+	},
+	"description": "POGO Stack language support",
+	"version": "1.2.0",
+	"publisher": "evgenyk",
+	"engines": {
+		"vscode": "^1.30.0-insider",
+		"node": "^8.9.3"
+	},
+	"categories": [
+		"Programming Languages"
+	],
+	"contributes": {
+		"languages": [
+			{
+				"id": "pogo",
+				"aliases": [
+					"pogo"
+				],
+				"extensions": [
+					"pogo"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "pogo",
+				"scopeName": "source.pogo",
+				"path": "./syntaxes/pogo.tmLanguage.json"
+			}
+		],
+		"breakpoints": [
+			{
+				"language": "pogo"
+			}
+		],
+		"debuggers": [
+			{
+				"type": "mock",
+				"label": "Pogo Debugger",
+				"program": "./out/debugAdapter.js",
+				"runtime": "node",
+				"configurationAttributes": {
+					"launch": {
+						"required": [
+							"program"
+						],
+						"properties": {
+							"program": {
+								"type": "string",
+								"description": "File name.",
+								"default": "${file}"
+							},
+							"stopOnEntry": {
+								"type": "boolean",
+								"description": "Automatically stop after launch.",
+								"default": true
+							},
+							"trace": {
+								"type": "boolean",
+								"description": "Enable logging of the Debug Adapter Protocol.",
+								"default": true
+							}
+						}
+					}
+				},
+				"initialConfigurations": [
+					{
+						"type": "mock",
+						"request": "launch",
+						"name": "Pogo Debugger",
+						"program": "${file}",
+						"stopOnEntry": true
+					}
+				],
+				"configurationSnippets": [
+					{
+						"label": "Mock Debug: Launch",
+						"description": "A new configuration for debugging a pogo file.",
+						"body": {
+							"type": "mock",
+							"request": "launch",
+							"name": "Pogo Debugger",
+							"program": "${fileDirname}",
+							"stopOnEntry": true
+						}
+					}
+				],
+				"variables": {
+				}
+			}
+		]
+	},
+	"scripts": {
+		"prepare": "tsc -p ./src",
+		"compile": "tsc -p ./src",
+		"tslint": "tslint ./src/**/*.ts",
+		"watch": "tsc -w -p ./src",
+		"test": "mocha -u tdd ./out/tests/",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"package": "vsce package",
+		"publish": "vsce publish"
+	},
+	"dependencies": {
+		"await-notify": "1.0.1",
+		"vscode-debugadapter": "1.33.0"
+	},
+	"devDependencies": {
+		"@types/node": "8.9.3",
+		"@types/mocha": "5.2.5",
+		"typescript": "3.1.6",
+		"mocha": "5.2.0",
+		"vscode": "1.1.21",
+		"vscode-debugadapter-testsupport": "1.33.0",
+		"tslint": "5.11.0",
+		"vsce": "1.53.2"
+	},
+	"main": "./out/extension",
+	"activationEvents": [
+		"onDebug"
+	]
 }
