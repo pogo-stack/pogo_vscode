@@ -4,6 +4,7 @@
 
 import { readFileSync } from 'fs';
 import { EventEmitter } from 'events';
+import * as hhh from 'request';
 
 export interface MockBreakpoint {
 	id: number;
@@ -27,6 +28,9 @@ export class MockRuntime extends EventEmitter {
 
 	// This is the next line that will be 'executed'
 	private _currentLine = 0;
+	public get currentLine() {
+		return this._currentLine;
+	}
 
 	// maps from sourceFile to array of Mock breakpoints
 	private _breakPoints = new Map<string, MockBreakpoint[]>();
@@ -45,8 +49,10 @@ export class MockRuntime extends EventEmitter {
 	 */
 	public start(program: string, stopOnEntry: boolean) {
 
+
 		this.loadSource(program);
 		this._currentLine = -1;
+		
 
 		this.verifyBreakpoints(this._sourceFile);
 
@@ -101,6 +107,18 @@ export class MockRuntime extends EventEmitter {
 	 * Set breakpoint in file with given line.
 	 */
 	public setBreakPoint(path: string, line: number) : MockBreakpoint {
+
+		hhh.post("http://localhost:4250/set_breakpoint", {
+			body: {
+				'path': path,
+				'line': line,
+				'session': JSON.stringify(this),
+			},
+			json: true
+		}, (err, res, body) =>{
+			this.sendEvent('output', JSON.stringify(res), '');
+		});
+
 
 		const bp = <MockBreakpoint> { verified: false, line, id: this._breakpointId++ };
 		let bps = this._breakPoints.get(path);
@@ -175,6 +193,7 @@ export class MockRuntime extends EventEmitter {
 	}
 
 	private verifyBreakpoints(path: string) : void {
+
 		let bps = this._breakPoints.get(path);
 		if (bps) {
 			this.loadSource(path);

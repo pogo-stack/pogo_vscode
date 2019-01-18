@@ -95,8 +95,7 @@
 						}
 					}
 				],
-				"variables": {
-				}
+				"variables": {}
 			}
 		]
 	},
@@ -117,12 +116,14 @@
 	"devDependencies": {
 		"@types/node": "8.9.3",
 		"@types/mocha": "5.2.5",
+		"@types/request": "2.48.1",
 		"typescript": "3.1.6",
 		"mocha": "5.2.0",
 		"vscode": "1.1.21",
 		"vscode-debugadapter-testsupport": "1.33.0",
 		"tslint": "5.11.0",
-		"vsce": "1.53.2"
+		"vsce": "1.53.2",
+		"request": "2.88.0"
 	},
 	"main": "./out/extension",
 	"activationEvents": [

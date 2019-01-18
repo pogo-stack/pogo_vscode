@@ -19,6 +19,7 @@ const { Subject } = require('await-notify');
  * (which are not part of the Debug Adapter Protocol).
  * The schema for these attributes lives in the package.json of the mock-debug extension.
  * The interface should always match this schema.
+ * The interface should always match this schema.
  */
 interface LaunchRequestArguments extends DebugProtocol.LaunchRequestArguments {
 	/** An absolute path to the "program" to debug. */
@@ -98,7 +99,7 @@ export class MockDebugSession extends LoggingDebugSession {
 		response.body.supportsEvaluateForHovers = true;
 
 		// make VS Code to show a 'step back' button
-		response.body.supportsStepBack = true;
+		response.body.supportsStepBack = false;
 
 		this.sendResponse(response);
 
