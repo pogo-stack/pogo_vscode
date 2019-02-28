@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs';
 import { EventEmitter } from 'events';
 import * as hhh from 'request';
+import * as www from 'timers'
 
 export interface MockBreakpoint {
 	id: number;
@@ -47,7 +48,11 @@ export class MockRuntime extends EventEmitter {
 			// we just start to run until we hit a breakpoint or an exception
 			this.continue();
 		}
+		www.setInterval(function(that){
+			that.sendEvent('output', 'checking active breakpoints....', 'qqq', 111);
+		}, 500, this)
 	}
+
     /**
      * Continue execution to the end/beginning.
      */
