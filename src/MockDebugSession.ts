@@ -5,6 +5,7 @@ import { MockBreakpoint } from './MockRuntime';
 import { MockRuntime } from "./MockRuntime";
 const { Subject } = require('await-notify');
 import { LaunchRequestArguments } from './mockDebug';
+import * as hhh from 'request';
 export class MockDebugSession extends LoggingDebugSession {
 	// we don't support multiple threads, so we can use a hardcoded ID for the default thread
 	private static THREAD_ID = 1;
@@ -86,9 +87,64 @@ export class MockDebugSession extends LoggingDebugSession {
 		this._runtime.start(args.program, !!args.stopOnEntry);
 		this.sendResponse(response);
 	}
+
+	private emitEvent(event: string, ...args: any[]) {
+		setImmediate(_ => {
+			this.emit(event, ...args);
+		});
+	}
+
+	private _breakpointId = 1;
 	protected setBreakPointsRequest(response: DebugProtocol.SetBreakpointsResponse, args: DebugProtocol.SetBreakpointsArguments): void {
-		const path = <string>args.source.path;
+
+		const pageName = <string>args.source.name;
+		var pogoPageName = pageName.replace('.pogo', '');
 		const clientLines = args.breakpoints || [];
+
+
+		const ffg = clientLines.map(l => {
+			var bid = this._breakpointId++
+			var breakpointToValidate = {line: this.convertClientLineToDebugger(l.line), id: bid + ''}
+			return breakpointToValidate;
+		});
+
+		var validationRequestItem = [{
+			page: pogoPageName,
+			breakpoints: ffg
+		}]
+
+		hhh.post("http://localhost:4250/command/set_breakpoints", {
+			body: validationRequestItem,
+			json: true
+		}, (err, res, body) => {
+			var heh = res.toJSON().body;
+			var actualBreakpoints = <DebugProtocol.Breakpoint[]>heh.map(verifiedPage => {
+				if (verifiedPage.page != pogoPageName) {
+					return [];
+				}
+				var abps = <DebugProtocol.Breakpoint[]>verifiedPage.breakpoints.map(verifiedBreakpoint => {
+					const breakpoint = <DebugProtocol.Breakpoint>new Breakpoint(true, verifiedBreakpoint.line)
+					return breakpoint;
+				})
+				return abps;
+			});
+
+			var flatArray = flatten(actualBreakpoints)
+
+			response.body = {
+				breakpoints: flatArray
+			};
+			this.sendResponse(response);
+		});
+
+		function flatten(arr) {
+			return arr.reduce(function (flat, toFlatten) {
+			  return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+			}, []);
+		  }
+
+/*
+		const path = <string>args.source.path;
 		// clear all breakpoints for this file
 		this._runtime.clearBreakpoints(path);
 		// set and verify breakpoint locations
@@ -103,6 +159,7 @@ export class MockDebugSession extends LoggingDebugSession {
 			breakpoints: actualBreakpoints
 		};
 		this.sendResponse(response);
+	*/
 	}
 	protected threadsRequest(response: DebugProtocol.ThreadsResponse): void {
 		// runtime supports now threads so just return a default thread.
