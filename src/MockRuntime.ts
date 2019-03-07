@@ -33,6 +33,12 @@ export class MockRuntime extends EventEmitter {
 	constructor() {
 		super();
 	}
+
+	private _threadNumbers = 1;
+	private _threadsMap = new Map<string, number>();
+	private _threadStackTraces = new Map<number, any>();
+
+
     /**
      * Start executing the given program.
      */
@@ -49,7 +55,17 @@ export class MockRuntime extends EventEmitter {
 			this.continue();
 		}
 		www.setInterval(function(that){
-			that.sendEvent('output', 'checking active breakpoints....', 'qqq', 111);
+			hhh.get("http://localhost:4250/status", {
+				json: true
+			},
+			(err, res, body) => {
+				for(var requestId in body.active) {
+					var activeBreakpoints = body.active[requestId];
+					that.sendEvent('stopOnBreakpoint')
+					//that.sendEvent('output', 'breakpoint....' + bb, 'qqq', 111);
+			}
+
+			});
 		}, 500, this)
 	}
 
@@ -88,21 +104,6 @@ export class MockRuntime extends EventEmitter {
      * Set breakpoint in file with given line.
      */
 	public setBreakPoint(path: string, line: number): MockBreakpoint {
-		hhh.post("http://localhost:4250/set_breakpoint", {
-			body: {
-				'path': path,
-				'line': line,
-				'session': JSON.stringify(this),
-			},
-			json: true
-		}, (err, res, body) => {
-			//this.sendEvent('output', JSON.stringify(this), '');
-			// var hehe = new Map<string, MockBreakpoint[]>();
-			// var hehe2 = new Array<MockBreakpoint>();
-			// hehe2.push(<MockBreakpoint>{id: 1, line: 1, verified: true});
-			// hehe.set("sss", hehe2);
-			this.sendEvent('output', JSON.stringify(res), 'dddd', 123);
-		});
 		const bp = <MockBreakpoint>{ verified: false, line, id: this._breakpointId++ };
 		let bps = this._breakPoints.get(path);
 		if (!bps) {

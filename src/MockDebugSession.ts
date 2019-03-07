@@ -88,12 +88,6 @@ export class MockDebugSession extends LoggingDebugSession {
 		this.sendResponse(response);
 	}
 
-	private emitEvent(event: string, ...args: any[]) {
-		setImmediate(_ => {
-			this.emit(event, ...args);
-		});
-	}
-
 	private _breakpointId = 1;
 	protected setBreakPointsRequest(response: DebugProtocol.SetBreakpointsResponse, args: DebugProtocol.SetBreakpointsArguments): void {
 
