@@ -13,6 +13,7 @@ export class MockDebugSession extends LoggingDebugSession {
 	private _runtime: MockRuntime;
 	private _variableHandles = new Handles<string>();
 	private _configurationDone = new Subject();
+	private _threadStates = new Map<number, any>();
     /**
      * Creates a new debug adapter that is used for one debug session.
      * We configure the default implementation of a debug adapter here.
@@ -30,14 +31,17 @@ export class MockDebugSession extends LoggingDebugSession {
 		this._runtime.on('stopOnStep', () => {
 			this.sendEvent(new StoppedEvent('step', MockDebugSession.THREAD_ID));
 		});
-		this._runtime.on('stopOnBreakpoint', () => {
-			this.sendEvent(new StoppedEvent('breakpoint', MockDebugSession.THREAD_ID));
+		this._runtime.on('stopOnBreakpoint', (threadId) => {
+			this.sendEvent(new StoppedEvent('breakpoint', threadId));
 		});
-		this._runtime.on('stopOnException', () => {
-			this.sendEvent(new StoppedEvent('exception', MockDebugSession.THREAD_ID));
+		this._runtime.on('stopOnException', (threadId) => {
+			this.sendEvent(new StoppedEvent('exception', threadId));
 		});
 		this._runtime.on('breakpointValidated', (bp: MockBreakpoint) => {
 			this.sendEvent(new BreakpointEvent('changed', <DebugProtocol.Breakpoint>{ verified: bp.verified, id: bp.id }));
+		});
+		this._runtime.on('threadState', (threadId: number, threadState: any) => {
+			this._threadStates.set(threadId, threadState)
 		});
 		this._runtime.on('output', (text, filePath, line, column) => {
 			const e: DebugProtocol.OutputEvent = new OutputEvent(`${text}\n`);
@@ -157,21 +161,29 @@ export class MockDebugSession extends LoggingDebugSession {
 	}
 	protected threadsRequest(response: DebugProtocol.ThreadsResponse): void {
 		// runtime supports now threads so just return a default thread.
+
+		var threads: Array<Thread> = [];
+		this._threadStates.forEach((value: any, key: number) => {
+			threads.push(new Thread(key, key + ''))
+		});
+
 		response.body = {
-			threads: [
-				new Thread(MockDebugSession.THREAD_ID, "thread 1")
-			]
+			threads: threads
 		};
 		this.sendResponse(response);
 	}
 	protected stackTraceRequest(response: DebugProtocol.StackTraceResponse, args: DebugProtocol.StackTraceArguments): void {
-		const startFrame = typeof args.startFrame === 'number' ? args.startFrame : 0;
-		const maxLevels = typeof args.levels === 'number' ? args.levels : 1000;
-		const endFrame = startFrame + maxLevels;
-		const stk = this._runtime.stack(startFrame, endFrame);
+		var threadCallStack = this._threadStates.get(args.threadId).call_stack
+
+		//const startFrame = typeof args.startFrame === 'number' ? args.startFrame : 0;
+		//const maxLevels = typeof args.levels === 'number' ? args.levels : 1000;
+		//const endFrame = startFrame + maxLevels;
+		//const stk = this._runtime.stack(startFrame, endFrame);
 		response.body = {
-			stackFrames: stk.frames.map(f => new StackFrame(f.index, f.name, this.createSource(f.file), this.convertDebuggerLineToClient(f.line))),
-			totalFrames: stk.count
+			stackFrames: threadCallStack.map((f,i)=>{
+				new StackFrame(i, f.page, this.createSource(f.page + '.pogo'), this.convertDebuggerLineToClient(f.line));
+			}),
+			totalFrames: threadCallStack.length
 		};
 		this.sendResponse(response);
 	}

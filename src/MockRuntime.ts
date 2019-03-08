@@ -34,11 +34,6 @@ export class MockRuntime extends EventEmitter {
 		super();
 	}
 
-	private _threadNumbers = 1;
-	private _threadsMap = new Map<string, number>();
-	private _threadStackTraces = new Map<number, any>();
-
-
     /**
      * Start executing the given program.
      */
@@ -60,9 +55,11 @@ export class MockRuntime extends EventEmitter {
 			},
 			(err, res, body) => {
 				for(var requestId in body.active) {
-					var activeBreakpoints = body.active[requestId];
-					that.sendEvent('stopOnBreakpoint')
-					//that.sendEvent('output', 'breakpoint....' + bb, 'qqq', 111);
+					var activeBreakpoint = body.active[requestId];
+
+					that.sendEvent('stopOnBreakpoint', <number>activeBreakpoint.thread_id_int)
+					that.sendEvent('threadState', <number>activeBreakpoint.thread_id_int, activeBreakpoint)
+					that.sendEvent('output', 'breakpoint....' + requestId, 'qqq', 111);
 			}
 
 			});
