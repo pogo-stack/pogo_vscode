@@ -6,6 +6,7 @@ import { MockRuntime } from "./MockRuntime";
 const { Subject } = require('await-notify');
 import { LaunchRequestArguments } from './mockDebug';
 import * as hhh from 'request';
+import { log } from 'util';
 export class MockDebugSession extends LoggingDebugSession {
 	// we don't support multiple threads, so we can use a hardcoded ID for the default thread
 	private static THREAD_ID = 1;
@@ -160,6 +161,8 @@ export class MockDebugSession extends LoggingDebugSession {
 		};
 		this.sendResponse(response);
 	*/
+
+
 	}
 	protected threadsRequest(response: DebugProtocol.ThreadsResponse): void {
 		// runtime supports now threads so just return a default thread.
@@ -174,8 +177,12 @@ export class MockDebugSession extends LoggingDebugSession {
 		};
 		this.sendResponse(response);
 	}
+
+
+	private _currentThreadId = 0
 	protected stackTraceRequest(response: DebugProtocol.StackTraceResponse, args: DebugProtocol.StackTraceArguments): void {
-		var threadCallStack = this._threadStates.get(args.threadId).call_stack
+		this._currentThreadId = args.threadId;
+		var threadCallStack = this._threadStates.get(this._currentThreadId).call_stack
 		threadCallStack = threadCallStack ? threadCallStack : [];
 
 		//const startFrame = typeof args.startFrame === 'number' ? args.startFrame : 0;
@@ -196,7 +203,7 @@ export class MockDebugSession extends LoggingDebugSession {
 	protected scopesRequest(response: DebugProtocol.ScopesResponse, args: DebugProtocol.ScopesArguments): void {
 		const frameReference = args.frameId;
 		const scopes = new Array<Scope>();
-		scopes.push(new Scope("Local", this._variableHandles.create("local_" + frameReference), false));
+		scopes.push(new Scope("Local", this._variableHandles.create(""+frameReference), false));
 		//scopes.push(new Scope("Global", this._variableHandles.create("global_" + frameReference), true));
 		response.body = {
 			scopes: scopes
@@ -204,34 +211,47 @@ export class MockDebugSession extends LoggingDebugSession {
 		this.sendResponse(response);
 	}
 	protected variablesRequest(response: DebugProtocol.VariablesResponse, args: DebugProtocol.VariablesArguments): void {
-		const variables = new Array<DebugProtocol.Variable>();
+		var stack = this._threadStates.get(this._currentThreadId).call_stack
+		var variables = new Array<DebugProtocol.Variable>();
+
 		const id = this._variableHandles.get(args.variablesReference);
-		if (id !== null) {
-			variables.push({
-				name: id + "_i",
-				type: "integer",
-				value: "123",
-				variablesReference: 0
-			});
-			variables.push({
-				name: id + "_f",
-				type: "float",
-				value: "3.14",
-				variablesReference: 0
-			});
-			variables.push({
-				name: id + "_s",
-				type: "string",
-				value: "hello world",
-				variablesReference: 0
-			});
-			variables.push({
-				name: id + "_o",
-				type: "object",
-				value: "Object",
-				variablesReference: this._variableHandles.create("object_")
-			});
-		}
+		var stackFrame = stack[Number(id)];
+		var objectProps = Object.getOwnPropertyNames(stackFrame.state);
+		log(objectProps + "")
+
+		variables = variables.concat(objectProps.map((k,v)=>{
+			return <DebugProtocol.Variable>{
+				name: k,
+				value: stackFrame.state[k] + ""
+			}
+		}));
+
+		// if (id !== null) {
+		// 	variables.push({
+		// 		name: id + "_i",
+		// 		type: "integer",
+		// 		value: "123",
+		// 		variablesReference: 0
+		// 	});
+		// 	variables.push({
+		// 		name: id + "_f",
+		// 		type: "float",
+		// 		value: "3.14",
+		// 		variablesReference: 0
+		// 	});
+		// 	variables.push({
+		// 		name: id + "_s",
+		// 		type: "string",
+		// 		value: "hello world",
+		// 		variablesReference: 0
+		// 	});
+		// 	variables.push({
+		// 		name: id + "_o",
+		// 		type: "object",
+		// 		value: "Object",
+		// 		variablesReference: this._variableHandles.create("object_")
+		// 	});
+		// }
 		response.body = {
 			variables: variables
 		};
