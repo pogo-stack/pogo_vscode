@@ -57,8 +57,8 @@ export class MockRuntime extends EventEmitter {
 				for(var requestId in body.active) {
 					var activeBreakpoint = body.active[requestId];
 
-					that.sendEvent('stopOnBreakpoint', <number>activeBreakpoint.thread_id_int)
 					that.sendEvent('threadState', <number>activeBreakpoint.thread_id_int, activeBreakpoint)
+					that.sendEvent('stopOnBreakpoint', <number>activeBreakpoint.thread_id_int)
 					//that.sendEvent('output', 'breakpoint....' + requestId, 'qqq', 111);
 			}
 

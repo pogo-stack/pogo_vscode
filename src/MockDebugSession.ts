@@ -184,11 +184,10 @@ export class MockDebugSession extends LoggingDebugSession {
 		//const stk = this._runtime.stack(startFrame, endFrame);
 		response.body = {
 			stackFrames: threadCallStack.map((f,i)=>{
-				var fileName = f.page + '.pogo';
-				var fullfileName = <string>this._pageNamesToPaths.get(fileName);
+				var fullfileName = <string>f.file_name;
 				var src = this.createSource(fullfileName);
 				var line = this.convertDebuggerLineToClient(f.line);
-				new StackFrame(i, fullfileName, src, line);
+				return new StackFrame(i, fullfileName, src, line);
 			}),
 			totalFrames: threadCallStack.length
 		};
