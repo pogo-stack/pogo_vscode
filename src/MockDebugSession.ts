@@ -14,6 +14,7 @@ export class MockDebugSession extends LoggingDebugSession {
 	private _variableHandles = new Handles<string>();
 	private _configurationDone = new Subject();
 	private _threadStates = new Map<number, any>();
+	private _pageNamesToPaths = new Map<string, string>();
     /**
      * Creates a new debug adapter that is used for one debug session.
      * We configure the default implementation of a debug adapter here.
@@ -95,6 +96,7 @@ export class MockDebugSession extends LoggingDebugSession {
 	private _breakpointId = 1;
 	protected setBreakPointsRequest(response: DebugProtocol.SetBreakpointsResponse, args: DebugProtocol.SetBreakpointsArguments): void {
 
+		this._pageNamesToPaths.set(<string>args.source.name, <string>args.source.path);
 		const pageName = <string>args.source.name;
 		var pogoPageName = pageName.replace('.pogo', '');
 		const clientLines = args.breakpoints || [];
@@ -174,6 +176,7 @@ export class MockDebugSession extends LoggingDebugSession {
 	}
 	protected stackTraceRequest(response: DebugProtocol.StackTraceResponse, args: DebugProtocol.StackTraceArguments): void {
 		var threadCallStack = this._threadStates.get(args.threadId).call_stack
+		threadCallStack = threadCallStack ? threadCallStack : [];
 
 		//const startFrame = typeof args.startFrame === 'number' ? args.startFrame : 0;
 		//const maxLevels = typeof args.levels === 'number' ? args.levels : 1000;
@@ -181,7 +184,11 @@ export class MockDebugSession extends LoggingDebugSession {
 		//const stk = this._runtime.stack(startFrame, endFrame);
 		response.body = {
 			stackFrames: threadCallStack.map((f,i)=>{
-				new StackFrame(i, f.page, this.createSource(f.page + '.pogo'), this.convertDebuggerLineToClient(f.line));
+				var fileName = f.page + '.pogo';
+				var fullfileName = <string>this._pageNamesToPaths.get(fileName);
+				var src = this.createSource(fullfileName);
+				var line = this.convertDebuggerLineToClient(f.line);
+				new StackFrame(i, fullfileName, src, line);
 			}),
 			totalFrames: threadCallStack.length
 		};
@@ -280,6 +287,8 @@ export class MockDebugSession extends LoggingDebugSession {
 	}
 	//---- helpers
 	private createSource(filePath: string): Source {
-		return new Source(basename(filePath), this.convertDebuggerPathToClient(filePath), undefined, undefined, 'mock-adapter-data');
+		var name = basename(filePath);
+		var clientThing = this.convertDebuggerPathToClient(filePath);
+		return new Source(name, clientThing, undefined, undefined, 'mock-adapter-data');
 	}
 }

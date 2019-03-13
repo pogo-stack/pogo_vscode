@@ -47,7 +47,7 @@ export class MockRuntime extends EventEmitter {
 		}
 		else {
 			// we just start to run until we hit a breakpoint or an exception
-			this.continue();
+			//this.continue();
 		}
 		www.setInterval(function(that){
 			hhh.get("http://localhost:4250/status", {
@@ -59,7 +59,7 @@ export class MockRuntime extends EventEmitter {
 
 					that.sendEvent('stopOnBreakpoint', <number>activeBreakpoint.thread_id_int)
 					that.sendEvent('threadState', <number>activeBreakpoint.thread_id_int, activeBreakpoint)
-					that.sendEvent('output', 'breakpoint....' + requestId, 'qqq', 111);
+					//that.sendEvent('output', 'breakpoint....' + requestId, 'qqq', 111);
 			}
 
 			});
@@ -70,6 +70,7 @@ export class MockRuntime extends EventEmitter {
      * Continue execution to the end/beginning.
      */
 	public continue(reverse = false) {
+		hhh.get("http://localhost:4250/command/continue_all");
 	}
     /**
      * Step to the next/previous non empty line.
@@ -224,7 +225,7 @@ export class MockRuntime extends EventEmitter {
 	// 	}
 	// 	// non-empty line
 	// 	if (stepEvent && line.length > 0) {
-	// 		this.sendEvent(stepEvent);
+	// 		this.sendEvent(stepEvent);
 	// 		return true;
 	// 	}
 	// 	// nothing interesting found -> continue
