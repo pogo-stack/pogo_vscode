@@ -34,6 +34,8 @@ export class MockRuntime extends EventEmitter {
 		super();
 	}
 
+	public _handledRequests =  new Map<string, boolean>()
+
     /**
      * Start executing the given program.
      */
@@ -56,6 +58,13 @@ export class MockRuntime extends EventEmitter {
 			(err, res, body) => {
 				for(var requestId in body.active) {
 					var activeBreakpoint = body.active[requestId];
+
+					var hhh = that._handledRequests.get(requestId)
+					if (hhh !== undefined) {
+						continue;
+					}
+
+					that._handledRequests.set(requestId, true);
 
 					that.sendEvent('threadState', <number>activeBreakpoint.thread_id_int, activeBreakpoint)
 					that.sendEvent('stopOnBreakpoint', <number>activeBreakpoint.thread_id_int)

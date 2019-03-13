@@ -186,8 +186,8 @@ export class MockDebugSession extends LoggingDebugSession {
 			stackFrames: threadCallStack.map((f,i)=>{
 				var fullfileName = <string>f.file_name;
 				var src = this.createSource(fullfileName);
-				var line = this.convertDebuggerLineToClient(f.line);
-				return new StackFrame(i, fullfileName, src, line);
+				//var line = this.convertDebuggerLineToClient(f.line);
+				return new StackFrame(i, f.name, src, f.line);
 			}),
 			totalFrames: threadCallStack.length
 		};
@@ -197,7 +197,7 @@ export class MockDebugSession extends LoggingDebugSession {
 		const frameReference = args.frameId;
 		const scopes = new Array<Scope>();
 		scopes.push(new Scope("Local", this._variableHandles.create("local_" + frameReference), false));
-		scopes.push(new Scope("Global", this._variableHandles.create("global_" + frameReference), true));
+		//scopes.push(new Scope("Global", this._variableHandles.create("global_" + frameReference), true));
 		response.body = {
 			scopes: scopes
 		};
