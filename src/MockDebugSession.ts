@@ -180,6 +180,8 @@ export class MockDebugSession extends LoggingDebugSession {
 
 
 	private _currentThreadId = 0
+	private _currentStackFrameId = 0;
+
 	protected stackTraceRequest(response: DebugProtocol.StackTraceResponse, args: DebugProtocol.StackTraceArguments): void {
 		this._currentThreadId = args.threadId;
 		var threadCallStack = this._threadStates.get(this._currentThreadId).call_stack
@@ -211,15 +213,16 @@ export class MockDebugSession extends LoggingDebugSession {
 		this.sendResponse(response);
 	}
 	protected variablesRequest(response: DebugProtocol.VariablesResponse, args: DebugProtocol.VariablesArguments): void {
+		const id = this._variableHandles.get(args.variablesReference);
+		this._currentStackFrameId = Number(id)
 		var stack = this._threadStates.get(this._currentThreadId).call_stack
 		var variables = new Array<DebugProtocol.Variable>();
 
-		const id = this._variableHandles.get(args.variablesReference);
-		var stackFrame = stack[Number(id)];
+		var stackFrame = stack[this._currentStackFrameId];
 		var objectProps = Object.getOwnPropertyNames(stackFrame.state);
 		log(objectProps + "")
 
-		variables = variables.concat(objectProps.map((k,v)=>{
+		variables = variables.concat(objectProps.map((k)=>{
 			return <DebugProtocol.Variable>{
 				name: k,
 				value: stackFrame.state[k] + ""
