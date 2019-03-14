@@ -56,10 +56,10 @@ export class MockRuntime extends EventEmitter {
 				json: true
 			},
 			(err, res, body) => {
-				for(var requestId in body.active) {
-					var activeBreakpoint = body.active[requestId];
+				for(let requestId in body.active) {
+					let activeBreakpoint = body.active[requestId];
 
-					var hhh = that._handledRequests.get(requestId)
+					let hhh = that._handledRequests.get(requestId)
 					if (hhh !== undefined) {
 						continue;
 					}
