@@ -1,10 +1,10 @@
 {
 	"compilerOptions": {
 		"module": "commonjs",
-		"target": "es6",
+		"target": "es2015",
 
 		"noImplicitAny": false,
-		"removeComments": false,
+		"removeComments": true,
 		"noUnusedLocals": true,
 		"noImplicitThis": true,
 		"inlineSourceMap": false,
