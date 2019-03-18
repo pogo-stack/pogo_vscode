@@ -1,17 +1,17 @@
 import { Logger, logger, LoggingDebugSession, InitializedEvent, TerminatedEvent, StoppedEvent, BreakpointEvent, OutputEvent, Thread, StackFrame, Scope, Source, Handles, Breakpoint } from 'vscode-debugadapter';
 import { DebugProtocol } from 'vscode-debugprotocol';
 import { basename } from 'path';
-import { MockBreakpoint } from './MockRuntime';
-import { MockRuntime } from "./MockRuntime";
+import { MockBreakpoint } from './PogoDebuggerRuntime';
+import { PogoDebuggerRuntime } from "./PogoDebuggerRuntime";
 const { Subject } = require('await-notify');
-import { LaunchRequestArguments } from './mockDebug';
+import { LaunchRequestArguments } from './LaunchRequestArguments';
 import * as hhh from 'request';
 import { log } from 'util';
-export class MockDebugSession extends LoggingDebugSession {
+export class PogoDebugSession extends LoggingDebugSession {
 	// we don't support multiple threads, so we can use a hardcoded ID for the default thread
 	private static THREAD_ID = 1;
 	// a Mock runtime (or debugger)
-	private _runtime: MockRuntime;
+	private _runtime: PogoDebuggerRuntime;
 	private _variableHandles = new Handles<string>();
 	private _configurationDone = new Subject();
 	private _threadStates = new Map<number, any>();
@@ -25,13 +25,13 @@ export class MockDebugSession extends LoggingDebugSession {
 		// this debugger uses zero-based lines and columns
 		this.setDebuggerLinesStartAt1(false);
 		this.setDebuggerColumnsStartAt1(false);
-		this._runtime = new MockRuntime();
+		this._runtime = new PogoDebuggerRuntime();
 		// setup event handlers
 		this._runtime.on('stopOnEntry', () => {
-			this.sendEvent(new StoppedEvent('entry', MockDebugSession.THREAD_ID));
+			this.sendEvent(new StoppedEvent('entry', PogoDebugSession.THREAD_ID));
 		});
 		this._runtime.on('stopOnStep', () => {
-			this.sendEvent(new StoppedEvent('step', MockDebugSession.THREAD_ID));
+			this.sendEvent(new StoppedEvent('step', PogoDebugSession.THREAD_ID));
 		});
 		this._runtime.on('stopOnBreakpoint', (threadId) => {
 			this.sendEvent(new StoppedEvent('breakpoint', threadId));

@@ -1,7 +1,3 @@
-/*---------------------------------------------------------
- * Copyright (C) Microsoft Corporation. All rights reserved.
- *--------------------------------------------------------*/
+ import { PogoDebugSession } from "./PogoDebugSession";
 
- import { MockDebugSession } from "./MockDebugSession";
-
- MockDebugSession.run(MockDebugSession);
+ PogoDebugSession.run(PogoDebugSession);

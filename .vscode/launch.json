@@ -45,11 +45,11 @@
 			"internalConsoleOptions": "openOnSessionStart"
 		},
 		{
-			"name": "Mock Sample",
-			"type": "mock",
+			"name": "Pogo debugger",
+			"type": "pogodebug",
 			"request": "launch",
 			"program": "${workspaceFolder}/${command:AskForProgramName}",
-			"stopOnEntry": true
+			"stopOnEntry": false
 		}
 	],
 	"compounds": [

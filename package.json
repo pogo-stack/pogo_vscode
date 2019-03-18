@@ -10,7 +10,7 @@
 	},
 	"license": "MIT",
 	"description": "POGO Stack language support",
-	"version": "1.3.4",
+	"version": "1.3.5",
 	"publisher": "evgenyko",
 	"engines": {
 		"vscode": "^1.30.0-insider",
@@ -46,7 +46,7 @@
 		],
 		"debuggers": [
 			{
-				"type": "mock",
+				"type": "pogodebug",
 				"label": "Pogo Debugger",
 				"program": "./out/debugAdapter.js",
 				"runtime": "node",
@@ -64,7 +64,7 @@
 							"stopOnEntry": {
 								"type": "boolean",
 								"description": "Automatically stop after launch.",
-								"default": true
+								"default": false
 							},
 							"trace": {
 								"type": "boolean",
@@ -76,23 +76,23 @@
 				},
 				"initialConfigurations": [
 					{
-						"type": "mock",
+						"type": "pogodebug",
 						"request": "launch",
 						"name": "Pogo Debugger",
 						"program": "${file}",
-						"stopOnEntry": true
+						"stopOnEntry": false
 					}
 				],
 				"configurationSnippets": [
 					{
-						"label": "Mock Debug: Launch",
+						"label": "Pogo Debug: Launch",
 						"description": "A new configuration for debugging a pogo file.",
 						"body": {
-							"type": "mock",
+							"type": "pogodebug",
 							"request": "launch",
 							"name": "Pogo Debugger",
-							"program": "${fileDirname}",
-							"stopOnEntry": true
+							"program": "${file}",
+							"stopOnEntry": false
 						}
 					}
 				],

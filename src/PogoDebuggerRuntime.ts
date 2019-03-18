@@ -12,7 +12,7 @@ export interface MockBreakpoint {
 /**
  * A Mock runtime with minimal debugger functionality.
  */
-export class MockRuntime extends EventEmitter {
+export class PogoDebuggerRuntime extends EventEmitter {
 	// the initial (and one and only) file we are 'debugging'
 	private _sourceFile: string;
 	public get sourceFile() {

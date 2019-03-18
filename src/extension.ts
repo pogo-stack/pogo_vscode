@@ -1,12 +1,8 @@
-/*---------------------------------------------------------
- * Copyright (C) Microsoft Corporation. All rights reserved.
- *--------------------------------------------------------*/
-
 'use strict';
 
 import * as vscode from 'vscode';
 import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken } from 'vscode';
-import { MockDebugSession } from "./MockDebugSession";
+import { PogoDebugSession } from "./PogoDebugSession";
 import * as Net from 'net';
 
 /*
@@ -17,21 +13,13 @@ import * as Net from 'net';
 const EMBED_DEBUG_ADAPTER = false;
 
 export function activate(context: vscode.ExtensionContext) {
-	
-	// context.subscriptions.push(vscode.commands.registerCommand('extension.mock-debug.getProgramName', config => {
-	// 	return vscode.window.showInputBox({
-	// 		placeHolder: "Please enter the name of a pogo file in the workspace folder",
-	// 		value: "readme.pogo"
-	// 	});
-	// }));
 
-	// register a configuration provider for 'mock' debug type
-	const provider = new MockConfigurationProvider();
-	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('mock', provider));
+	const provider = new PogodebugConfigurationProvider();
+	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('pogodebug', provider));
 
 	if (EMBED_DEBUG_ADAPTER) {
-		const factory = new MockDebugAdapterDescriptorFactory();
-		context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('mock', factory));
+		const factory = new PogodebugAdapterDescriptorFactory();
+		context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('pogodebug', factory));
 		context.subscriptions.push(factory);
 	}
 }
@@ -41,7 +29,7 @@ export function deactivate() {
 }
 
 
-class MockConfigurationProvider implements vscode.DebugConfigurationProvider {
+class PogodebugConfigurationProvider implements vscode.DebugConfigurationProvider {
 
 	/**
 	 * Massage a debug configuration just before a debug session is being launched,
@@ -53,11 +41,11 @@ class MockConfigurationProvider implements vscode.DebugConfigurationProvider {
 		if (!config.type && !config.request && !config.name) {
 			const editor = vscode.window.activeTextEditor;
 			if (editor && editor.document.languageId === 'pogo') {
-				config.type = 'mock';
-				config.name = 'Pogo debug';
+				config.type = 'pogodebug';
+				config.name = 'Pogo debugger';
 				config.request = 'launch';
 				config.program = '${file}';
-				config.stopOnEntry = true;
+				config.stopOnEntry = false;
 			}
 		}
 
@@ -71,7 +59,7 @@ class MockConfigurationProvider implements vscode.DebugConfigurationProvider {
 	}
 }
 
-class MockDebugAdapterDescriptorFactory implements vscode.DebugAdapterDescriptorFactory {
+class PogodebugAdapterDescriptorFactory implements vscode.DebugAdapterDescriptorFactory {
 
 	private server?: Net.Server;
 
@@ -80,7 +68,7 @@ class MockDebugAdapterDescriptorFactory implements vscode.DebugAdapterDescriptor
 		if (!this.server) {
 			// start listening on a random port
 			this.server = Net.createServer(socket => {
-				const session = new MockDebugSession();
+				const session = new PogoDebugSession();
 				session.setRunAsServer(true);
 				session.start(<NodeJS.ReadableStream>socket, socket);
 			}).listen(0);
