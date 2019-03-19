@@ -34,6 +34,8 @@ export class MockRuntime extends EventEmitter {
 		super();
 	}
 
+	public _statusChecker: NodeJS.Timer;
+
     /**
      * Start executing the given program.
      */
@@ -49,11 +51,16 @@ export class MockRuntime extends EventEmitter {
 			// we just start to run until we hit a breakpoint or an exception
 			//this.continue();
 		}
-		www.setInterval(function(that){
+		this._statusChecker = www.setInterval(function(that){
 			hhh.get("http://localhost:4250/status", {
 				json: true
 			},
 			(err, res, body) => {
+				if (err){
+					that._statusChecker = undefined;
+					that.sendEvent('output', `Error on checking debugger status: at "http://localhost:4250/status" error ${JSON.stringify(err)}\n`, 'pogo_debug');
+					that.sendEvent('end');
+				}
 				for(var requestId in body.active) {
 					var activeBreakpoint = body.active[requestId];
 
@@ -70,7 +77,13 @@ export class MockRuntime extends EventEmitter {
      * Continue execution to the end/beginning.
      */
 	public continue(reverse = false) {
-		hhh.get("http://localhost:4250/command/continue_all");
+		hhh.get("http://localhost:4250/command/continue_all", {}, (err, res, body) => {
+			if(err){
+				this.sendEvent('output', `Error sending continue request at "http://localhost:4250/command/continue_all" error ${JSON.stringify(err)}\n`, 'pogo_debug');
+				return;
+			}
+		});
+
 	}
     /**
      * Step to the next/previous non empty line.

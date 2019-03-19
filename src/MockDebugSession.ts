@@ -112,11 +112,17 @@ export class MockDebugSession extends LoggingDebugSession {
 			page: pogoPageName,
 			breakpoints: ffg
 		}]
+		//this.sendErrorResponse(response, 500, 'test error response')
 
 		hhh.post("http://localhost:4250/command/set_breakpoints", {
 			body: validationRequestItem,
 			json: true
 		}, (err, res, body) => {
+			if(err){
+				this.sendEvent(new OutputEvent(`Error on debugger request "${JSON.stringify(validationRequestItem)}" to "http://localhost:4250/command/set_breakpoints" error ${JSON.stringify(err)}\n`, 'pogo_debug'));
+				this.sendEvent(new TerminatedEvent());
+				return;
+			}
 			var heh = res.toJSON().body;
 			var actualBreakpoints = <DebugProtocol.Breakpoint[]>heh.map(verifiedPage => {
 				if (verifiedPage.page != pogoPageName) {
