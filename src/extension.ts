@@ -43,16 +43,8 @@ class PogodebugConfigurationProvider implements vscode.DebugConfigurationProvide
 			if (editor && editor.document.languageId === 'pogo') {
 				config.type = 'pogodebug';
 				config.name = 'Pogo debugger';
-				config.request = 'launch';
-				config.program = '${file}';
-				config.stopOnEntry = false;
+				config.request = 'debug';
 			}
-		}
-
-		if (!config.program) {
-			return vscode.window.showInformationMessage("Cannot find a program to debug").then(_ => {
-				return undefined;	// abort launch
-			});
 		}
 
 		return config;

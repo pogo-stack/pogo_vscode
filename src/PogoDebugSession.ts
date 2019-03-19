@@ -27,9 +27,9 @@ export class PogoDebugSession extends LoggingDebugSession {
 		this.setDebuggerColumnsStartAt1(false);
 		this._runtime = new PogoDebuggerRuntime();
 		// setup event handlers
-		this._runtime.on('stopOnEntry', () => {
-			this.sendEvent(new StoppedEvent('entry', PogoDebugSession.THREAD_ID));
-		});
+		// this._runtime.on('stopOnEntry', () => {
+		// 	this.sendEvent(new StoppedEvent('entry', PogoDebugSession.THREAD_ID));
+		// });
 		this._runtime.on('stopOnStep', () => {
 			this.sendEvent(new StoppedEvent('step', PogoDebugSession.THREAD_ID));
 		});
@@ -90,7 +90,7 @@ export class PogoDebugSession extends LoggingDebugSession {
 		// wait until configuration has finished (and configurationDoneRequest has been called)
 		await this._configurationDone.wait(1000);
 		// start the program in the runtime
-		this._runtime.start(args.program, !!args.stopOnEntry);
+		this._runtime.start(args.program, false); //!!args.stopOnEntry
 		this.sendResponse(response);
 	}
 

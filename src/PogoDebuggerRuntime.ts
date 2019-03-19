@@ -47,7 +47,7 @@ export class PogoDebuggerRuntime extends EventEmitter {
 		this.verifyBreakpoints(this._sourceFile);
 		if (stopOnEntry) {
 			// we step once
-			this.step(false, 'stopOnEntry');
+			//this.step(false, 'stopOnEntry');
 		}
 		else {
 			// we just start to run until we hit a breakpoint or an exception

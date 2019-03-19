@@ -10,7 +10,7 @@
 	},
 	"license": "MIT",
 	"description": "POGO Stack language support",
-	"version": "1.3.5",
+	"version": "1.3.6",
 	"publisher": "evgenyko",
 	"engines": {
 		"vscode": "^1.30.0-insider",
@@ -52,20 +52,8 @@
 				"runtime": "node",
 				"configurationAttributes": {
 					"launch": {
-						"required": [
-							"program"
-						],
+						"required": [],
 						"properties": {
-							"program": {
-								"type": "string",
-								"description": "File name.",
-								"default": "${file}"
-							},
-							"stopOnEntry": {
-								"type": "boolean",
-								"description": "Automatically stop after launch.",
-								"default": false
-							},
 							"trace": {
 								"type": "boolean",
 								"description": "Enable logging of the Debug Adapter Protocol.",
@@ -77,22 +65,18 @@
 				"initialConfigurations": [
 					{
 						"type": "pogodebug",
-						"request": "launch",
-						"name": "Pogo Debugger",
-						"program": "${file}",
-						"stopOnEntry": false
+						"request": "attach",
+						"name": "Pogo Debugger"
 					}
 				],
 				"configurationSnippets": [
 					{
-						"label": "Pogo Debug: Launch",
+						"label": "Pogo Debug: attach",
 						"description": "A new configuration for debugging a pogo file.",
 						"body": {
 							"type": "pogodebug",
-							"request": "launch",
-							"name": "Pogo Debugger",
-							"program": "${file}",
-							"stopOnEntry": false
+							"request": "attach",
+							"name": "Pogo Debugger"
 						}
 					}
 				],

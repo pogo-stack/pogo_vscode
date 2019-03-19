@@ -48,8 +48,7 @@
 			"name": "Pogo debugger",
 			"type": "pogodebug",
 			"request": "launch",
-			"program": "${workspaceFolder}/${command:AskForProgramName}",
-			"stopOnEntry": false
+			"program": "${workspaceFolder}/${command:AskForProgramName}"
 		}
 	],
 	"compounds": [
