@@ -6,6 +6,7 @@ import { MockRuntime } from "./MockRuntime";
 const { Subject } = require('await-notify');
 import { LaunchRequestArguments } from './mockDebug';
 import * as hhh from 'request';
+import { log } from 'util';
 export class MockDebugSession extends LoggingDebugSession {
 	// we don't support multiple threads, so we can use a hardcoded ID for the default thread
 	private static THREAD_ID = 1;
@@ -98,17 +99,17 @@ export class MockDebugSession extends LoggingDebugSession {
 
 		this._pageNamesToPaths.set(<string>args.source.name, <string>args.source.path);
 		const pageName = <string>args.source.name;
-		var pogoPageName = pageName.replace('.pogo', '');
+		let pogoPageName = pageName.replace('.pogo', '');
 		const clientLines = args.breakpoints || [];
 
 
 		const ffg = clientLines.map(l => {
-			var bid = this._breakpointId++
-			var breakpointToValidate = {line: this.convertClientLineToDebugger(l.line), id: bid + ''}
+			let bid = this._breakpointId++
+			let breakpointToValidate = {line: this.convertClientLineToDebugger(l.line), id: bid + ''}
 			return breakpointToValidate;
 		});
 
-		var validationRequestItem = [{
+		let validationRequestItem = [{
 			page: pogoPageName,
 			breakpoints: ffg
 		}]
@@ -123,19 +124,19 @@ export class MockDebugSession extends LoggingDebugSession {
 				this.sendEvent(new TerminatedEvent());
 				return;
 			}
-			var heh = res.toJSON().body;
-			var actualBreakpoints = <DebugProtocol.Breakpoint[]>heh.map(verifiedPage => {
-				if (verifiedPage.page != pogoPageName) {
+			let heh = res.toJSON().body;
+			let actualBreakpoints = <DebugProtocol.Breakpoint[]>heh.map(verifiedPage => {
+				if (verifiedPage.page !== pogoPageName) {
 					return [];
 				}
-				var abps = <DebugProtocol.Breakpoint[]>verifiedPage.breakpoints.map(verifiedBreakpoint => {
+				let abps = <DebugProtocol.Breakpoint[]>verifiedPage.breakpoints.map(verifiedBreakpoint => {
 					const breakpoint = <DebugProtocol.Breakpoint>new Breakpoint(true, verifiedBreakpoint.line)
 					return breakpoint;
 				})
 				return abps;
 			});
 
-			var flatArray = flatten(actualBreakpoints)
+			let flatArray = flatten(actualBreakpoints)
 
 			response.body = {
 				breakpoints: flatArray
@@ -166,11 +167,13 @@ export class MockDebugSession extends LoggingDebugSession {
 		};
 		this.sendResponse(response);
 	*/
+
+
 	}
 	protected threadsRequest(response: DebugProtocol.ThreadsResponse): void {
 		// runtime supports now threads so just return a default thread.
 
-		var threads: Array<Thread> = [];
+		let threads: Array<Thread> = [];
 		this._threadStates.forEach((value: any, key: number) => {
 			threads.push(new Thread(key, key + ''))
 		});
@@ -180,8 +183,14 @@ export class MockDebugSession extends LoggingDebugSession {
 		};
 		this.sendResponse(response);
 	}
+
+
+	private _currentThreadId = 0
+	private _currentStackFrameId = 0;
+
 	protected stackTraceRequest(response: DebugProtocol.StackTraceResponse, args: DebugProtocol.StackTraceArguments): void {
-		var threadCallStack = this._threadStates.get(args.threadId).call_stack
+		this._currentThreadId = args.threadId;
+		let threadCallStack = this._threadStates.get(this._currentThreadId).call_stack
 		threadCallStack = threadCallStack ? threadCallStack : [];
 
 		//const startFrame = typeof args.startFrame === 'number' ? args.startFrame : 0;
@@ -190,10 +199,10 @@ export class MockDebugSession extends LoggingDebugSession {
 		//const stk = this._runtime.stack(startFrame, endFrame);
 		response.body = {
 			stackFrames: threadCallStack.map((f,i)=>{
-				var fullfileName = <string>f.file_name;
-				var src = this.createSource(fullfileName);
-				var line = this.convertDebuggerLineToClient(f.line);
-				return new StackFrame(i, fullfileName, src, line);
+				let fullfileName = <string>f.file_name;
+				let src = this.createSource(fullfileName);
+				//let line = this.convertDebuggerLineToClient(f.line);
+				return new StackFrame(i, f.name, src, f.line);
 			}),
 			totalFrames: threadCallStack.length
 		};
@@ -202,42 +211,56 @@ export class MockDebugSession extends LoggingDebugSession {
 	protected scopesRequest(response: DebugProtocol.ScopesResponse, args: DebugProtocol.ScopesArguments): void {
 		const frameReference = args.frameId;
 		const scopes = new Array<Scope>();
-		scopes.push(new Scope("Local", this._variableHandles.create("local_" + frameReference), false));
-		scopes.push(new Scope("Global", this._variableHandles.create("global_" + frameReference), true));
+		scopes.push(new Scope("Local", this._variableHandles.create(""+frameReference), false));
+		//scopes.push(new Scope("Global", this._variableHandles.create("global_" + frameReference), true));
 		response.body = {
 			scopes: scopes
 		};
 		this.sendResponse(response);
 	}
 	protected variablesRequest(response: DebugProtocol.VariablesResponse, args: DebugProtocol.VariablesArguments): void {
-		const variables = new Array<DebugProtocol.Variable>();
 		const id = this._variableHandles.get(args.variablesReference);
-		if (id !== null) {
-			variables.push({
-				name: id + "_i",
-				type: "integer",
-				value: "123",
-				variablesReference: 0
-			});
-			variables.push({
-				name: id + "_f",
-				type: "float",
-				value: "3.14",
-				variablesReference: 0
-			});
-			variables.push({
-				name: id + "_s",
-				type: "string",
-				value: "hello world",
-				variablesReference: 0
-			});
-			variables.push({
-				name: id + "_o",
-				type: "object",
-				value: "Object",
-				variablesReference: this._variableHandles.create("object_")
-			});
-		}
+		this._currentStackFrameId = Number(id)
+		let stack = this._threadStates.get(this._currentThreadId).call_stack
+		let variables = new Array<DebugProtocol.Variable>();
+
+		let stackFrame = stack[this._currentStackFrameId];
+		let objectProps = Object.getOwnPropertyNames(stackFrame.state);
+		log(objectProps + "")
+
+		variables = variables.concat(objectProps.map((k)=>{
+			return <DebugProtocol.Variable>{
+				name: k,
+				value: stackFrame.state[k] + ""
+			}
+		}));
+
+		// if (id !== null) {
+		// 	variables.push({
+		// 		name: id + "_i",
+		// 		type: "integer",
+		// 		value: "123",
+		// 		variablesReference: 0
+		// 	});
+		// 	variables.push({
+		// 		name: id + "_f",
+		// 		type: "float",
+		// 		value: "3.14",
+		// 		variablesReference: 0
+		// 	});
+		// 	variables.push({
+		// 		name: id + "_s",
+		// 		type: "string",
+		// 		value: "hello world",
+		// 		variablesReference: 0
+		// 	});
+		// 	variables.push({
+		// 		name: id + "_o",
+		// 		type: "object",
+		// 		value: "Object",
+		// 		variablesReference: this._variableHandles.create("object_")
+		// 	});
+		// }
 		response.body = {
 			variables: variables
 		};
@@ -292,8 +315,8 @@ export class MockDebugSession extends LoggingDebugSession {
 	}
 	//---- helpers
 	private createSource(filePath: string): Source {
-		var name = basename(filePath);
-		var clientThing = this.convertDebuggerPathToClient(filePath);
+		let name = basename(filePath);
+		let clientThing = this.convertDebuggerPathToClient(filePath);
 		return new Source(name, clientThing, undefined, undefined, 'mock-adapter-data');
 	}
 }

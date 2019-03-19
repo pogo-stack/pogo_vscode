@@ -22,4 +22,8 @@ Added support for psp & psp2 inside `<%= %>`
 
 Fixed component illegal html for pogo components
 
+### 1.3
+
+Debugging
+
 ## [Unreleased]

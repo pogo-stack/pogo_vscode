@@ -34,6 +34,8 @@ export class MockRuntime extends EventEmitter {
 		super();
 	}
 
+	public _handledRequests =  new Map<string, boolean>()
+
 	public _statusChecker: NodeJS.Timer;
 
     /**
@@ -61,8 +63,15 @@ export class MockRuntime extends EventEmitter {
 					that.sendEvent('output', `Error on checking debugger status: at "http://localhost:4250/status" error ${JSON.stringify(err)}\n`, 'pogo_debug');
 					that.sendEvent('end');
 				}
-				for(var requestId in body.active) {
-					var activeBreakpoint = body.active[requestId];
+				for(let requestId in body.active) {
+					let activeBreakpoint = body.active[requestId];
+
+					let hhh = that._handledRequests.get(requestId)
+					if (hhh !== undefined) {
+						continue;
+					}
+
+					that._handledRequests.set(requestId, true);
 
 					that.sendEvent('threadState', <number>activeBreakpoint.thread_id_int, activeBreakpoint)
 					that.sendEvent('stopOnBreakpoint', <number>activeBreakpoint.thread_id_int)
