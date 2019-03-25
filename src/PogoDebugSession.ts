@@ -90,7 +90,17 @@ export class PogoDebugSession extends LoggingDebugSession {
 		// wait until configuration has finished (and configurationDoneRequest has been called)
 		await this._configurationDone.wait(1000);
 		// start the program in the runtime
-		this._runtime.start(args.program, false); //!!args.stopOnEntry
+		this._runtime.start(); //!!args.stopOnEntry
+		this.sendResponse(response);
+	}
+
+	protected async attachRequest(response: DebugProtocol.AttachResponse, args: DebugProtocol.AttachRequestArguments) {
+		// make sure to 'Stop' the buffered logging if 'trace' is not set
+		logger.setup(Logger.LogLevel.Stop, false);
+		// wait until configuration has finished (and configurationDoneRequest has been called)
+		await this._configurationDone.wait(1000);
+		// start the program in the runtime
+		this._runtime.start(); //!!args.stopOnEntry
 		this.sendResponse(response);
 	}
 

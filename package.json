@@ -10,7 +10,7 @@
 	},
 	"license": "MIT",
 	"description": "POGO Stack language support",
-	"version": "1.3.6",
+	"version": "1.3.7",
 	"publisher": "evgenyko",
 	"engines": {
 		"vscode": "^1.30.0-insider",
