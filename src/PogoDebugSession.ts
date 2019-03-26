@@ -241,7 +241,9 @@ export class PogoDebugSession extends LoggingDebugSession {
 		variables = variables.concat(objectProps.map((k)=>{
 			return <DebugProtocol.Variable>{
 				name: k,
-				value: stackFrame.state[k] + ""
+				type: 'object',
+				value: JSON.stringify(stackFrame.state[k]),
+				variablesReference: 0
 			}
 		}));
 
