@@ -94,11 +94,24 @@ export class PogoDebugSession extends LoggingDebugSession {
 		this.sendResponse(response);
 	}
 
+	protected disconnectRequest(response: DebugProtocol.DisconnectResponse, args: DebugProtocol.DisconnectArguments) {
+		hhh.get("http://localhost:4250/command/clear_breakpoints", {
+			json: true
+		},
+		(err, res, body) => {
+			if (err){
+				//TODO: log
+			}
+			this._runtime.stopChecking();
+			this.sendResponse(response);
+		});
+	}
+
 	protected async attachRequest(response: DebugProtocol.AttachResponse, args: DebugProtocol.AttachRequestArguments) {
 		// make sure to 'Stop' the buffered logging if 'trace' is not set
 		logger.setup(Logger.LogLevel.Stop, false);
 		// wait until configuration has finished (and configurationDoneRequest has been called)
-		await this._configurationDone.wait(1000);
+		//await this._configurationDone.wait(1000);
 		// start the program in the runtime
 		this._runtime.start(); //!!args.stopOnEntry
 		this.sendResponse(response);
@@ -242,37 +255,11 @@ export class PogoDebugSession extends LoggingDebugSession {
 			return <DebugProtocol.Variable>{
 				name: k,
 				type: 'object',
-				value: JSON.stringify(stackFrame.state[k]),
+				value: JSON.stringify(stackFrame.state[k], null, '  '),
 				variablesReference: 0
 			}
 		}));
 
-		// if (id !== null) {
-		// 	variables.push({
-		// 		name: id + "_i",
-		// 		type: "integer",
-		// 		value: "123",
-		// 		variablesReference: 0
-		// 	});
-		// 	variables.push({
-		// 		name: id + "_f",
-		// 		type: "float",
-		// 		value: "3.14",
-		// 		variablesReference: 0
-		// 	});
-		// 	variables.push({
-		// 		name: id + "_s",
-		// 		type: "string",
-		// 		value: "hello world",
-		// 		variablesReference: 0
-		// 	});
-		// 	variables.push({
-		// 		name: id + "_o",
-		// 		type: "object",
-		// 		value: "Object",
-		// 		variablesReference: this._variableHandles.create("object_")
-		// 	});
-		// }
 		response.body = {
 			variables: variables
 		};
@@ -300,10 +287,10 @@ export class PogoDebugSession extends LoggingDebugSession {
 
 		let stackFrame = stack[this._currentStackFrameId];
 
-		let result = stackFrame.state[args.expression]
+		let result = JSON.stringify(stackFrame.state[args.expression], null, '  ');
 
 		response.body = {
-			result: `'${args.expression}', '${result}')`,
+			result: `'${args.expression}': ${result})`,
 			variablesReference: 0
 		};
 		this.sendResponse(response);

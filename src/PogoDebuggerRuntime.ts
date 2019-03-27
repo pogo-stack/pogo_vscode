@@ -38,6 +38,10 @@ export class PogoDebuggerRuntime extends EventEmitter {
 
 	public _statusChecker: NodeJS.Timer;
 
+	public stopChecking(){
+		www.clearInterval(this._statusChecker);
+	}
+
     /**
      * Start executing the given program.
      */
@@ -152,9 +156,9 @@ export class PogoDebuggerRuntime extends EventEmitter {
     /*
      * Clear all breakpoints for file.
      */
-	public clearBreakpoints(path: string): void {
-		this._breakPoints.delete(path);
-	}
+	// public clearBreakpoints(path: string): void {
+	// 	this._breakPoints.delete(path);
+	// }
 	// private methods
 	private loadSource(file: string) {
 		if (this._sourceFile !== file) {
