@@ -278,7 +278,7 @@ export class PogoDebugSession extends LoggingDebugSession {
 		this.sendResponse(response);
 	}
 	protected stepBackRequest(response: DebugProtocol.StepBackResponse, args: DebugProtocol.StepBackArguments): void {
-		this._runtime.step(true);
+		this._runtime.step();
 		this.sendResponse(response);
 	}
 	protected evaluateRequest(response: DebugProtocol.EvaluateResponse, args: DebugProtocol.EvaluateArguments): void {

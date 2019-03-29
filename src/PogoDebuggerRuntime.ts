@@ -101,7 +101,7 @@ export class PogoDebuggerRuntime extends EventEmitter {
     /**
      * Step to the next/previous non empty line.
      */
-	public step(reverse = false, event = 'stopOnStep') {
+	public step() {
 	}
     /**
      * Returns a fake 'stacktrace' where every 'stackframe' is a word from the current line.
