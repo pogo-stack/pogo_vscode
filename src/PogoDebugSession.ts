@@ -274,13 +274,19 @@ export class PogoDebugSession extends LoggingDebugSession {
 		this.sendResponse(response);
 	}
 	protected nextRequest(response: DebugProtocol.NextResponse, args: DebugProtocol.NextArguments): void {
-		this._runtime.step();
+		this._runtime.step(this._currentThreadId);
 		this.sendResponse(response);
 	}
 	protected stepBackRequest(response: DebugProtocol.StepBackResponse, args: DebugProtocol.StepBackArguments): void {
-		this._runtime.step();
+		this._runtime.step(this._currentThreadId);
 		this.sendResponse(response);
 	}
+
+	protected stepInRequest(response: DebugProtocol.StepInResponse, args: DebugProtocol.StepInArguments): void {
+		this._runtime.step(this._currentThreadId);
+		this.sendResponse(response);
+	}
+
 	protected evaluateRequest(response: DebugProtocol.EvaluateResponse, args: DebugProtocol.EvaluateArguments): void {
 
 		let stack = this._threadStates.get(this._currentThreadId).call_stack

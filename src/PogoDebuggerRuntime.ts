@@ -101,7 +101,13 @@ export class PogoDebuggerRuntime extends EventEmitter {
     /**
      * Step to the next/previous non empty line.
      */
-	public step() {
+	public step(threadId) {
+		hhh.get("http://localhost:4250/command/step?thread_id=" + threadId, {}, (err, res, body) => {
+			if(err){
+				this.sendEvent('output', `Error sending continue request at "http://localhost:4250/command/step?thread_id=${threadId}" error ${JSON.stringify(err)}\n`, 'pogo_debug');
+				return;
+			}
+		});
 	}
     /**
      * Returns a fake 'stacktrace' where every 'stackframe' is a word from the current line.
