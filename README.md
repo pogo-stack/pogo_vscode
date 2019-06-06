@@ -1,6 +1,6 @@
 # pogo README
 
-Provides `.pogo` syntax hihlighting.
+Provides `.pogo` syntax highlighting.
 
 Provides pogo debugging
 
