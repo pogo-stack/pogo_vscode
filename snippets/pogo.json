@@ -1,0 +1,21 @@
+{
+	".source.pogo": {
+		"Pogo native": {
+			"prefix": "pnat",
+			"description": "Pogo function that could be accessed from the web",
+			"body": [
+				"#pragma native",
+				"",
+				"$TM_FILENAME_BASE",
+				"",
+				"<?",
+				"$2",
+				"?>",
+				"",
+				"<%",
+				"$0",
+				"%>"
+			]
+		}
+	}
+}

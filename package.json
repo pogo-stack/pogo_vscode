@@ -32,6 +32,12 @@
 				"configuration": "./language-configuration.json"
 			}
 		],
+		"snippets": [
+			{
+				"language": "pogo",
+				"path": "./snippets/pogo.json"
+			}
+		],
 		"grammars": [
 			{
 				"language": "pogo",
