@@ -1,6 +1,6 @@
 'use strict';
 
-import * as vscode from 'vscode';
+import * as vscode from 'vscode'
 import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken } from 'vscode';
 import { PogoDebugSession } from "./PogoDebugSession";
 import * as Net from 'net';
@@ -15,7 +15,7 @@ const EMBED_DEBUG_ADAPTER = false;
 export function activate(context: vscode.ExtensionContext) {
 
 	const provider = new PogodebugConfigurationProvider();
-	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('pogodebug', provider));
+	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('pogodebug', provider))
 
 	if (EMBED_DEBUG_ADAPTER) {
 		const factory = new PogodebugAdapterDescriptorFactory();

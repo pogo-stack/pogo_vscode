@@ -96,7 +96,6 @@
 		"tslint": "tslint ./src/**/*.ts",
 		"watch": "tsc -w -p ./src",
 		"test": "mocha -u tdd ./out/tests/",
-		"postinstall": "node ./node_modules/vscode/bin/install",
 		"package": "vsce package",
 		"publish": "vsce publish"
 	},
@@ -106,7 +105,7 @@
 		"request": "^2.88.0",
 		"to": "^0.2.9",
 		"update": "^0.7.4",
-		"vscode-debugadapter": "^1.35.0"
+		"vscode-debugadapter": "1.37.1"
 	},
 	"devDependencies": {
 		"@types/node": "8.9.3",
@@ -114,10 +113,11 @@
 		"@types/request": "2.48.1",
 		"typescript": "^3.5.2",
 		"mocha": "^6.1.4",
-		"vscode": "1.1.34",
-		"vscode-debugadapter-testsupport": "^1.35.0",
-		"tslint": "^5.18.0",
-		"vsce": "^1.64.0"
+		"@types/vscode": "^1.41.0",
+		"vscode-test": "^1.3.0",
+		"vscode-debugadapter-testsupport": "^1.40.0",
+		"tslint": "^6.0.0",
+		"vsce": "^1.71.0"
 	},
 	"main": "./out/extension",
 	"activationEvents": [
