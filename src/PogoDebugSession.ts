@@ -4,7 +4,7 @@ import { basename } from 'path';
 import { MockBreakpoint } from './PogoDebuggerRuntime';
 import { PogoDebuggerRuntime } from "./PogoDebuggerRuntime";
 const { Subject } = require('await-notify');
-import { LaunchRequestArguments } from './LaunchRequestArguments';
+import { LaunchRequestArguments, AttachRequestArguments } from './LaunchRequestArguments';
 import * as hhh from 'request';
 import { log } from 'util';
 export class PogoDebugSession extends LoggingDebugSession {
@@ -84,15 +84,7 @@ export class PogoDebugSession extends LoggingDebugSession {
 		// notify the launchRequest that configuration has finished
 		this._configurationDone.notify();
 	}
-	protected async launchRequest(response: DebugProtocol.LaunchResponse, args: LaunchRequestArguments) {
-		// make sure to 'Stop' the buffered logging if 'trace' is not set
-		logger.setup(args.trace ? Logger.LogLevel.Verbose : Logger.LogLevel.Stop, false);
-		// wait until configuration has finished (and configurationDoneRequest has been called)
-		await this._configurationDone.wait(1000);
-		// start the program in the runtime
-		this._runtime.start(); //!!args.stopOnEntry
-		this.sendResponse(response);
-	}
+
 
 	protected disconnectRequest(response: DebugProtocol.DisconnectResponse, args: DebugProtocol.DisconnectArguments) {
 		hhh.get("http://localhost:4250/command/clear_breakpoints", {
@@ -107,18 +99,33 @@ export class PogoDebugSession extends LoggingDebugSession {
 		});
 	}
 
-	protected async attachRequest(response: DebugProtocol.AttachResponse, args: DebugProtocol.AttachRequestArguments) {
+	protected async attachRequest(response: DebugProtocol.AttachResponse, args: AttachRequestArguments) {
 		// make sure to 'Stop' the buffered logging if 'trace' is not set
 		logger.setup(Logger.LogLevel.Stop, false);
 		// wait until configuration has finished (and configurationDoneRequest has been called)
 		//await this._configurationDone.wait(1000);
 		// start the program in the runtime
-		this._runtime.start(); //!!args.stopOnEntry
+		this._stopOnEntry = args.stopOnEntry;
+		this._runtime.start(); //!!
 		this.sendResponse(response);
+		if (this._stopOnEntry) {
+			hhh.get("http://localhost:4250/command/attach_request", {
+				json: {
+					stopOnEntry: true
+				}
+			},
+			(err, res, body) => {
+				if (err){
+					//TODO: log
+				}
+			});
+		}
 	}
 
+	private _stopOnEntry = false;
 	private _breakpointId = 1;
 	protected setBreakPointsRequest(response: DebugProtocol.SetBreakpointsResponse, args: DebugProtocol.SetBreakpointsArguments): void {
+
 
 		this._pageNamesToPaths.set(<string>args.source.name, <string>args.source.path);
 		const pageName = <string>args.source.name;
@@ -134,8 +141,10 @@ export class PogoDebugSession extends LoggingDebugSession {
 
 		let validationRequestItem = [{
 			page: pogoPageName,
-			breakpoints: ffg
+			breakpoints: ffg,
+			stopOnEntry: this._stopOnEntry
 		}]
+		this._stopOnEntry = false;
 		//this.sendErrorResponse(response, 500, 'test error response')
 
 		hhh.post("http://localhost:4250/command/set_breakpoints", {

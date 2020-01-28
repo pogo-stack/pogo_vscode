@@ -49,15 +49,8 @@ export class PogoDebuggerRuntime extends EventEmitter {
 		//this.loadSource(program);
 		this._currentLine = -1;
 		this.verifyBreakpoints(this._sourceFile);
-		// if (stopOnEntry) {
-		// 	// we step once
-		// 	//this.step(false, 'stopOnEntry');
-		// }
-		// else {
-		// 	// we just start to run until we hit a breakpoint or an exception
-		// 	//this.continue();
-		// }
-		this._statusChecker = www.setInterval(function(that){
+
+		this._statusChecker = www.setInterval(function(that, breakpoints){
 			hhh.get("http://localhost:4250/status", {
 				json: true
 			},
@@ -83,7 +76,7 @@ export class PogoDebuggerRuntime extends EventEmitter {
 			}
 
 			});
-		}, 500, this)
+		}, 500, this, this._breakPoints)
 	}
 
     /**
