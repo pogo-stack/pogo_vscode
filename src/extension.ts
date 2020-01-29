@@ -67,7 +67,7 @@ class PogodebugAdapterDescriptorFactory implements vscode.DebugAdapterDescriptor
 		}
 
 		// make VS Code connect to debug server
-		return new vscode.DebugAdapterServer(this.server.address().port);
+		return new vscode.DebugAdapterServer((<Net.AddressInfo>this.server.address()).port);
 	}
 
 	dispose() {

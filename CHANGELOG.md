@@ -26,4 +26,9 @@ Fixed component illegal html for pogo components
 
 Debugging
 
+### 1.3.12
+
+Historical debugging support
+
+
 ## [Unreleased]

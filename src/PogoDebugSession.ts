@@ -4,7 +4,7 @@ import { basename } from 'path';
 import { MockBreakpoint } from './PogoDebuggerRuntime';
 import { PogoDebuggerRuntime } from "./PogoDebuggerRuntime";
 const { Subject } = require('await-notify');
-import { LaunchRequestArguments, AttachRequestArguments } from './LaunchRequestArguments';
+import { AttachRequestArguments } from './LaunchRequestArguments';
 import * as hhh from 'request';
 import { log } from 'util';
 export class PogoDebugSession extends LoggingDebugSession {

@@ -1,0 +1,1 @@
+npm run package --scripts-prepend-node-path
