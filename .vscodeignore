@@ -4,3 +4,4 @@
 package.sh
 .gitignore
 src
+node_modules

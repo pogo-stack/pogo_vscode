@@ -30,5 +30,12 @@ Debugging
 
 Historical debugging support
 
+### 1.3.13
+
+Ability to chnage debugging port
+
+### 1.3.18
+
+Used webpack for faster installs
 
 ## [Unreleased]
