@@ -87,7 +87,7 @@ export class PogoDebugSession extends LoggingDebugSession {
 
 
 	protected disconnectRequest(response: DebugProtocol.DisconnectResponse, args: DebugProtocol.DisconnectArguments) {
-		hhh.get("http://localhost:4250/command/clear_breakpoints", {
+		hhh.get(`http://localhost:${this._runtime.Port()}/command/clear_breakpoints`, {
 			json: true
 		},
 		(err, res, body) => {
@@ -105,11 +105,12 @@ export class PogoDebugSession extends LoggingDebugSession {
 		// wait until configuration has finished (and configurationDoneRequest has been called)
 		//await this._configurationDone.wait(1000);
 		// start the program in the runtime
+		const port = args.pogodebugger.port ?? 4250;
 		this._stopOnEntry = args.stopOnEntry;
-		this._runtime.start(); //!!
+		this._runtime.start(port); //!!
 		this.sendResponse(response);
 		if (this._stopOnEntry) {
-			hhh.get("http://localhost:4250/command/attach_request", {
+			hhh.get(`http://localhost:${this._runtime.Port()}/command/attach_request`, {
 				json: {
 					stopOnEntry: true
 				}
@@ -147,12 +148,12 @@ export class PogoDebugSession extends LoggingDebugSession {
 		this._stopOnEntry = false;
 		//this.sendErrorResponse(response, 500, 'test error response')
 
-		hhh.post("http://localhost:4250/command/set_breakpoints", {
+		hhh.post(`http://localhost:${this._runtime.Port()}/command/set_breakpoints`, {
 			body: validationRequestItem,
 			json: true
 		}, (err, res, body) => {
 			if(err){
-				this.sendEvent(new OutputEvent(`Error on debugger request "${JSON.stringify(validationRequestItem)}" to "http://localhost:4250/command/set_breakpoints" error ${JSON.stringify(err)}\n`, 'pogo_debug'));
+				this.sendEvent(new OutputEvent(`Error on debugger request "${JSON.stringify(validationRequestItem)}" to http://localhost:${this._runtime.Port()}/command/set_breakpoints" error ${JSON.stringify(err)}\n`, 'pogo_debug'));
 				this.sendEvent(new TerminatedEvent());
 				return;
 			}
@@ -181,25 +182,6 @@ export class PogoDebugSession extends LoggingDebugSession {
 			  return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
 			}, []);
 		  }
-
-/*
-		const path = <string>args.source.path;
-		// clear all breakpoints for this file
-		this._runtime.clearBreakpoints(path);
-		// set and verify breakpoint locations
-		const actualBreakpoints = clientLines.map(l => {
-			let { verified, line, id } = this._runtime.setBreakPoint(path, this.convertClientLineToDebugger(l.line));
-			const bp = <DebugProtocol.Breakpoint>new Breakpoint(verified, this.convertDebuggerLineToClient(line));
-			bp.id = id;
-			return bp;
-		});
-		// send back the actual breakpoint positions
-		response.body = {
-			breakpoints: actualBreakpoints
-		};
-		this.sendResponse(response);
-	*/
-
 
 	}
 	protected threadsRequest(response: DebugProtocol.ThreadsResponse): void {

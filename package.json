@@ -10,7 +10,7 @@
 	},
 	"license": "MIT",
 	"description": "POGO Stack language support",
-	"version": "1.3.12",
+	"version": "1.3.13",
 	"publisher": "evgenyko",
 	"engines": {
 		"vscode": "^1.41.x",
@@ -72,8 +72,11 @@
 					{
 						"type": "pogodebug",
 						"request": "attach",
-						"name": "Pogo Debugger"
-					}
+						"name": "Pogo Debugger",
+						"pogodebugger": {
+							"port": 4250
+						}
+				}
 				],
 				"configurationSnippets": [
 					{
@@ -82,7 +85,10 @@
 						"body": {
 							"type": "pogodebug",
 							"request": "attach",
-							"name": "Pogo Debugger"
+							"name": "Pogo Debugger",
+							"pogodebugger": {
+								"port": 4250
+							}
 						}
 					}
 				],

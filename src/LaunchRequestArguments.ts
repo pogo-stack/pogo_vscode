@@ -14,6 +14,7 @@ export interface LaunchRequestArguments extends DebugProtocol.LaunchRequestArgum
 	/** enable logging the Debug Adapter Protocol */
 	trace?: boolean;
 	stopOnEntry?: boolean;
+	debuggerPort?: number;
 }
 
 export interface AttachRequestArguments extends DebugProtocol.AttachRequestArguments {
@@ -22,6 +23,10 @@ export interface AttachRequestArguments extends DebugProtocol.AttachRequestArgum
 	/** enable logging the Debug Adapter Protocol */
 	trace?: boolean;
 	stopOnEntry: boolean;
+	pogodebugger:  PogoDebuggerSettings;
 }
 
 
+export interface PogoDebuggerSettings {
+	port?: number
+}

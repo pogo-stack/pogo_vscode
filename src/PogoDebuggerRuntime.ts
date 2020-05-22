@@ -22,6 +22,7 @@ export class PogoDebuggerRuntime extends EventEmitter {
 	private _sourceLines: string[];
 	// This is the next line that will be 'executed'
 	private _currentLine = 0;
+	private _port = 4250;
 	public get currentLine() {
 		return this._currentLine;
 	}
@@ -42,22 +43,27 @@ export class PogoDebuggerRuntime extends EventEmitter {
 		www.clearInterval(this._statusChecker);
 	}
 
+	public Port() {
+		return this._port;
+	}
+
     /**
      * Start executing the given program.
      */
-	public start() {
+	public start(port) {
 		//this.loadSource(program);
+		this._port = port;
 		this._currentLine = -1;
 		this.verifyBreakpoints(this._sourceFile);
 
 		this._statusChecker = www.setInterval(function(that, breakpoints){
-			hhh.get("http://localhost:4250/status", {
+			hhh.get(`http://localhost:${that._port}/status`, {
 				json: true
 			},
 			(err, res, body) => {
 				if (err){
 					that._statusChecker = undefined;
-					that.sendEvent('output', `Error on checking debugger status: at "http://localhost:4250/status" error ${JSON.stringify(err)}\n`, 'pogo_debug');
+					that.sendEvent('output', `Error on checking debugger status: at "http://localhost:${that._port}/status" error ${JSON.stringify(err)}\n`, 'pogo_debug');
 					that.sendEvent('end');
 				}
 				for(let requestId in body.active) {
@@ -83,9 +89,9 @@ export class PogoDebuggerRuntime extends EventEmitter {
      * Continue execution to the end/beginning.
      */
 	public continue(reverse = false) {
-		hhh.get("http://localhost:4250/command/continue_all", {}, (err, res, body) => {
+		hhh.get(`http://localhost:${this._port}/command/continue_all`, {}, (err, res, body) => {
 			if(err){
-				this.sendEvent('output', `Error sending continue request at "http://localhost:4250/command/continue_all" error ${JSON.stringify(err)}\n`, 'pogo_debug');
+				this.sendEvent('output', `Error sending continue request at "http://localhost:${this._port}/command/continue_all" error ${JSON.stringify(err)}\n`, 'pogo_debug');
 				return;
 			}
 		});
@@ -95,9 +101,9 @@ export class PogoDebuggerRuntime extends EventEmitter {
      * Step to the next/previous non empty line.
      */
 	public step(threadId) {
-		hhh.get("http://localhost:4250/command/step?thread_id=" + threadId, {}, (err, res, body) => {
+		hhh.get(`http://localhost:${this._port}/command/step?thread_id=` + threadId, {}, (err, res, body) => {
 			if(err){
-				this.sendEvent('output', `Error sending continue request at "http://localhost:4250/command/step?thread_id=${threadId}" error ${JSON.stringify(err)}\n`, 'pogo_debug');
+				this.sendEvent('output', `Error sending continue request at "http://localhost:${this._port}/command/step?thread_id=${threadId}" error ${JSON.stringify(err)}\n`, 'pogo_debug');
 				return;
 			}
 		});
