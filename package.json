@@ -10,7 +10,7 @@
 	},
 	"license": "MIT",
 	"description": "POGO Stack language support",
-	"version": "1.3.18",
+	"version": "1.3.20",
 	"publisher": "evgenyko",
 	"engines": {
 		"vscode": "^1.41.0"
@@ -53,16 +53,23 @@
 			{
 				"type": "pogodebug",
 				"label": "Pogo Debugger",
-				"program": "./out/debugAdapter.js",
+				"program": "./dist/extension.js",
 				"runtime": "node",
 				"configurationAttributes": {
-					"launch": {
+					"attach": {
 						"required": [],
 						"properties": {
 							"trace": {
 								"type": "boolean",
 								"description": "Enable logging of the Debug Adapter Protocol.",
 								"default": true
+							},
+							"pogodebugger": {
+								"type": "object",
+								"description": "Additional tweaks for pogo debugger",
+								"default": {
+									"port": 4250
+								}
 							}
 						}
 					}
