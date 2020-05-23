@@ -21,7 +21,7 @@ export class PogoDebugSession extends LoggingDebugSession {
      * We configure the default implementation of a debug adapter here.
      */
 	public constructor() {
-		super("pogo-debug.txt");
+		super();
 		// this debugger uses zero-based lines and columns
 		this.setDebuggerLinesStartAt1(false);
 		this.setDebuggerColumnsStartAt1(false);
@@ -50,6 +50,7 @@ export class PogoDebugSession extends LoggingDebugSession {
 			e.body.source = this.createSource(filePath);
 			e.body.line = this.convertDebuggerLineToClient(line);
 			e.body.column = this.convertDebuggerColumnToClient(column);
+			//e.body.category = 'stdout'
 			this.sendEvent(e);
 		});
 		this._runtime.on('end', () => {
@@ -101,7 +102,7 @@ export class PogoDebugSession extends LoggingDebugSession {
 
 	protected async attachRequest(response: DebugProtocol.AttachResponse, args: AttachRequestArguments) {
 		// make sure to 'Stop' the buffered logging if 'trace' is not set
-		logger.setup(Logger.LogLevel.Stop, false);
+		logger.setup(Logger.LogLevel.Verbose, false);
 		// wait until configuration has finished (and configurationDoneRequest has been called)
 		//await this._configurationDone.wait(1000);
 		// start the program in the runtime
@@ -109,6 +110,7 @@ export class PogoDebugSession extends LoggingDebugSession {
 		this._stopOnEntry = args.stopOnEntry;
 		this._runtime.start(port); //!!
 		this.sendResponse(response);
+		this.sendEvent(new OutputEvent(`Attaching debugger`, 'stdout'));
 		if (this._stopOnEntry) {
 			hhh.get(`http://localhost:${this._runtime.Port()}/command/attach_request`, {
 				json: {

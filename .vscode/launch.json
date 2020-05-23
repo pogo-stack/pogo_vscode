@@ -9,41 +9,42 @@
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
+			"sourceMaps": true,
 			"outFiles": [
-				"${workspaceFolder}/out/**/*.js"
+				"${workspaceFolder}/dist/**/*.js"
 			],
-			"preLaunchTask": "npm: watch"
+			"preLaunchTask": "npm: webpack"
 		},
-		{
-			"name": "Server",
-			"type": "node",
-			"request": "launch",
-			"cwd": "${workspaceFolder}",
-			"program": "${workspaceFolder}/src/debugAdapter.ts",
-			"args": [
-				"--server=4711"
-			],
-			"outFiles": [
-				"${workspaceFolder}/out/**/*.js"
-			]
-		},
-		{
-			"name": "Tests",
-			"type": "node",
-			"request": "launch",
-			"cwd": "${workspaceFolder}",
-			"program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
-			"args": [
-				"-u", "tdd",
-				"--timeout", "999999",
-				"--colors",
-				"./out/tests/"
-			],
-			"outFiles": [
-				"${workspaceFolder}/out/**/*.js"
-			],
-			"internalConsoleOptions": "openOnSessionStart"
-		},
+		// {
+		// 	"name": "Server",
+		// 	"type": "node",
+		// 	"request": "launch",
+		// 	"cwd": "${workspaceFolder}",
+		// 	"program": "${workspaceFolder}/src/debugAdapter.ts",
+		// 	"args": [
+		// 		"--server=4711"
+		// 	],
+		// 	"outFiles": [
+		// 		"${workspaceFolder}/out/**/*.js"
+		// 	]
+		// },
+		// {
+		// 	"name": "Tests",
+		// 	"type": "node",
+		// 	"request": "launch",
+		// 	"cwd": "${workspaceFolder}",
+		// 	"program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+		// 	"args": [
+		// 		"-u", "tdd",
+		// 		"--timeout", "999999",
+		// 		"--colors",
+		// 		"./out/tests/"
+		// 	],
+		// 	"outFiles": [
+		// 		"${workspaceFolder}/out/**/*.js"
+		// 	],
+		// 	"internalConsoleOptions": "openOnSessionStart"
+		// },
 		{
 			"name": "Pogo debugger",
 			"type": "pogodebug",
