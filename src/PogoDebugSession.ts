@@ -4,7 +4,7 @@ import { basename } from 'path';
 import { MockBreakpoint } from './PogoDebuggerRuntime';
 import { PogoDebuggerRuntime } from "./PogoDebuggerRuntime";
 const { Subject } = require('await-notify');
-import { AttachRequestArguments } from './LaunchRequestArguments';
+import { AttachRequestArguments } from './AttachRequestArguments';
 import * as hhh from 'request';
 import { log } from 'util';
 export class PogoDebugSession extends LoggingDebugSession {
@@ -93,7 +93,7 @@ export class PogoDebugSession extends LoggingDebugSession {
 		},
 		(err, res, body) => {
 			if (err){
-				//TODO: log
+				this.sendEvent(new OutputEvent(`Error disconnecting`, 'stdout', err));
 			}
 			this._runtime.stopChecking();
 			this.sendResponse(response);
@@ -106,7 +106,10 @@ export class PogoDebugSession extends LoggingDebugSession {
 		// wait until configuration has finished (and configurationDoneRequest has been called)
 		//await this._configurationDone.wait(1000);
 		// start the program in the runtime
-		const port = args.pogodebugger.port ?? 4250;
+		var port = 4250;
+		if (args.pogodebugger && args.pogodebugger.port) {
+			port = args.pogodebugger.port
+		}
 		this._stopOnEntry = args.stopOnEntry;
 		this._runtime.start(port); //!!
 		this.sendResponse(response);
@@ -119,7 +122,7 @@ export class PogoDebugSession extends LoggingDebugSession {
 			},
 			(err, res, body) => {
 				if (err){
-					//TODO: log
+					this.sendEvent(new OutputEvent(`Error attaching`, 'stdout', err));
 				}
 			});
 		}

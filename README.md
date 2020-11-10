@@ -40,5 +40,8 @@ Debugging
 
 Historical debugging support
 
+### 1.3.25
+
+WSL debnugging support
 
 ## [Unreleased]

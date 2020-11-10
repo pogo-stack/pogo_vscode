@@ -29,13 +29,22 @@ export function deactivate() {
 }
 
 
+export class PogoDebugConfiguation {
+	[key: string]: any;
+	type: string;
+	name: string;
+	request: string;
+	debuggerPort?:  number;
+	stopOnEntry: boolean;
+}
+
 class PogodebugConfigurationProvider implements vscode.DebugConfigurationProvider {
 
 	/**
 	 * Massage a debug configuration just before a debug session is being launched,
 	 * e.g. add all missing attributes to the debug configuration.
 	 */
-	resolveDebugConfiguration(folder: WorkspaceFolder | undefined, config: DebugConfiguration, token?: CancellationToken): ProviderResult<DebugConfiguration> {
+	resolveDebugConfiguration(folder: WorkspaceFolder | undefined, config: PogoDebugConfiguation, token?: CancellationToken): ProviderResult<DebugConfiguration> {
 
 		// if launch.json is missing or empty
 		if (!config.type && !config.request && !config.name) {
@@ -66,8 +75,9 @@ class PogodebugAdapterDescriptorFactory implements vscode.DebugAdapterDescriptor
 			}).listen(0);
 		}
 
+		const newLocal = (<Net.AddressInfo>this.server.address());
 		// make VS Code connect to debug server
-		return new vscode.DebugAdapterServer((<Net.AddressInfo>this.server.address()).port);
+		return new vscode.DebugAdapterServer(newLocal.port);
 	}
 
 	dispose() {
