@@ -7,6 +7,8 @@ const { Subject } = require('await-notify');
 import { AttachRequestArguments } from './AttachRequestArguments';
 import * as hhh from 'request';
 import { log } from 'util';
+import * as path from 'path';
+
 export class PogoDebugSession extends LoggingDebugSession {
 	// we don't support multiple threads, so we can use a hardcoded ID for the default thread
 	private static THREAD_ID = 1;
@@ -297,8 +299,32 @@ export class PogoDebugSession extends LoggingDebugSession {
 		};
 		this.sendResponse(response);
 	}
+
+	private findPathSeparator(filePath: string) {
+		return filePath.includes('/') ? '/' : '\\';
+	}
+
+	private fixDriveCasingInWindows(pathToFix: string): string {
+		return process.platform === 'win32' && pathToFix
+			? pathToFix.substr(0, 1).toUpperCase() + pathToFix.substr(1)
+			: pathToFix;
+	}
+
+
+	private normalizePath(filePath: string) {
+		if (process.platform === 'win32') {
+			const pathSeparator = this.findPathSeparator(filePath);
+			filePath = path.normalize(filePath);
+			// Normalize will replace everything with backslash on Windows.
+			filePath = filePath.replace(/\\/g, pathSeparator);
+			return this.fixDriveCasingInWindows(filePath);
+		}
+		return filePath;
+	}
+
 	//---- helpers
 	private createSource(filePath: string): Source {
+		filePath = this.normalizePath(filePath);
 		let name = basename(filePath);
 		let clientThing = this.convertDebuggerPathToClient(filePath);
 		return new Source(name, clientThing, undefined, undefined, 'mock-adapter-data');
