@@ -12,4 +12,5 @@ export interface AttachRequestArguments extends DebugProtocol.AttachRequestArgum
 
 export interface PogoDebuggerSettings {
 	port?: number
+	isRemoteWSL?: boolean
 }

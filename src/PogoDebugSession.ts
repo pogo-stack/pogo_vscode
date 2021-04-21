@@ -112,8 +112,14 @@ export class PogoDebugSession extends LoggingDebugSession {
 		if (args.pogodebugger && args.pogodebugger.port) {
 			port = args.pogodebugger.port
 		}
+
+		var isRemoteWSL = false
+		if (args.pogodebugger && args.pogodebugger.isRemoteWSL) {
+			isRemoteWSL = args.pogodebugger.isRemoteWSL
+		}
+
 		this._stopOnEntry = args.stopOnEntry;
-		this._runtime.start(port); //!!
+		this._runtime.start(port, isRemoteWSL); //!!
 		this.sendResponse(response);
 		this.sendEvent(new OutputEvent(`Attaching debugger`, 'stdout'));
 		if (this._stopOnEntry) {
@@ -319,6 +325,10 @@ export class PogoDebugSession extends LoggingDebugSession {
 			filePath = filePath.replace(/\\/g, pathSeparator);
 			return this.fixDriveCasingInWindows(filePath);
 		}
+
+		if (this._runtime.isRemoteWSL) {
+			filePath = filePath.split('\\').join('/');
+		}
 		return filePath;
 	}
 
@@ -326,7 +336,13 @@ export class PogoDebugSession extends LoggingDebugSession {
 	private createSource(filePath: string): Source {
 		filePath = this.normalizePath(filePath);
 		let name = basename(filePath);
+
 		let clientThing = this.convertDebuggerPathToClient(filePath);
+
+		if (this._runtime.isRemoteWSL) {
+			clientThing = filePath
+		}
+
 		return new Source(name, clientThing, undefined, undefined, 'mock-adapter-data');
 	}
 }
